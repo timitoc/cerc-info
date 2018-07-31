@@ -27,6 +27,15 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.use("/docs", express.static("docs"));
+app.get("/", (req, res) => {
+  res.send(`
+    <h3>Welcome!</h3>
+    You are on this page, so this means everything worked as it was supposed to.
+    
+    <br/>
+    The documentation is at <a href="/docs">/docs</a>
+  `);
+});
 
 const groupRoutes = require("./api/routes/groups.js");
 
