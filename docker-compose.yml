@@ -1,0 +1,17 @@
+version: '2'
+services:
+  mysql:
+    build: ./mysql
+  node:
+    build: ./node
+    ports:
+      - "8080:8080"
+    depends_on:
+     - mysql
+    environment:
+     - DATABASE_HOST=mysql
+     - DATABASE_USER=root
+     - DATABASE_NAME=cercinfo
+    volumes:
+      - ".:/src/app"
+    restart: always
