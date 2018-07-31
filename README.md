@@ -19,3 +19,9 @@ Just make requests to [http://localhost:8080/api/INSERT_URL_HERE](http://localho
 ## Documentation
 
 To view the API docs, go to [http://localhost:8080/docs](http://localhost:8080/docs).
+
+## Security
+
+This project is security tested using [synk.io](https://snyk.io).
+
+[![Known Vulnerabilities](https://snyk.io/test/github/andreigasparovici/cerc-info/badge.svg?targetFile=node%2Fpackage.json)](https://snyk.io/test/github/andreigasparovici/cerc-info?targetFile=node%2Fpackage.json)
