@@ -19,14 +19,6 @@ const morgan = require("morgan");
 
 const app = express();
 
-// Load the body-parser module
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-// Add logging
-app.use(morgan('dev'));
-
-app.use("/docs", express.static("docs"));
 app.get("/", (req, res) => {
   res.send(`
     <h3>Welcome!</h3>
@@ -36,6 +28,15 @@ app.get("/", (req, res) => {
     The documentation is at <a href="/docs">/docs</a>
   `);
 });
+
+// Load the body-parser module
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// Add logging
+app.use(morgan('dev'));
+
+app.use("/docs", express.static("docs"));
 
 const groupRoutes = require("./api/routes/groups.js");
 

@@ -9,8 +9,6 @@ RUN npm install
 COPY . .
 RUN npm run apidoc
 
-ENV PORT 8080
-
-EXPOSE 8080
+EXPOSE 3000
 
 CMD [ "npm", "start" ]
