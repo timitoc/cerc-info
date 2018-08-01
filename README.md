@@ -17,15 +17,15 @@ docker-compose up
 ```
 
 
-Open your browser at [http://localhost:8080](http://localhost:8080), aaand ... magic!
+Open your browser at [http://localhost:3000](http://localhost:3000), aaand ... magic!
 
 ## How to make use of the API
 
-Just make requests to [http://localhost:8080/api/INSERT_URL_HERE](http://localhost:8080/api/INSERT_URL_HERE). All the available requests are defined in the documentation.
+Just make requests to [http://localhost:3000/api/INSERT_URL_HERE](http://localhost:3000/api/INSERT_URL_HERE). All the available requests are defined in the documentation.
 
 ## Documentation
 
-To view the API docs, go to [http://localhost:8080/docs](http://localhost:8080/docs).
+To view the API docs, go to [http://localhost:3000/docs](http://localhost:3000/docs).
 
 ## Security
 
