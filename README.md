@@ -32,3 +32,7 @@ To view the API docs, go to [https://andreigasparovici.github.io/cerc-info/](htt
 This project is security tested using [synk.io](https://snyk.io).
 
 [![Known Vulnerabilities](https://snyk.io/test/github/andreigasparovici/cerc-info/badge.svg?targetFile=node%2Fpackage.json)](https://snyk.io/test/github/andreigasparovici/cerc-info?targetFile=node%2Fpackage.json)
+
+## Things used from others:
+
+* [wait-for-it.sh](https://github.com/ycjcl868/eggjs-mysql-docker/blob/master/wait-for-it.sh)
