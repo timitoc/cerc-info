@@ -14,4 +14,6 @@ RUN chmod +x wait-for-it.sh
 
 EXPOSE 3000
 
+ENV DOCKER true
+
 CMD ./wait-for-it.sh mysql:3306 -- npm start

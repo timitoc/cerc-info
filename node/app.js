@@ -1,6 +1,10 @@
 const mysql = require("mysql");
 const util = require("util");
 
+if (!process.env.DOCKER) {
+  require("dotenv").config();
+}
+
 const connection = mysql.createConnection({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
@@ -36,13 +40,17 @@ app.use(bodyParser.json());
 // Add logging
 app.use(morgan('dev'));
 
+// Docs static folder
 app.use("/docs", express.static("docs"));
 
+// Import routes
 const groupRoutes = require("./api/routes/groups.js");
+const inviteRoutes = require("./api/routes/invite.js");
 
 // Load API routes
 const apiRouter = express.Router();
 apiRouter.use("/groups", groupRoutes);
+apiRouter.use("/invite", inviteRoutes);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);
