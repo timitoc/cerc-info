@@ -151,6 +151,48 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/login",
+    "title": "Authenticate user",
+    "name": "Login",
+    "group": "Login",
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"password\": \"supersecurepassword\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n     token: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5fc21pdGhAZ21haWwuY29tIiwibmFtZSI6IkpvaG4gU21pdGgiLCJwcml2aWxlZ2UiOjEsImlhdCI6MTUzMzA5NjYyNH0.9o8iQTOp1-p8s8gDV9bgY6lzg1Y2K-Zvilp_nLHN6zo\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error: User not found",
+          "content": "HTTP 200\n{\n   \"error\": \"User account not found!\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Error: Incorrect credentials",
+          "content": "HTTP 200\n{\n   \"error\": \"Incorrect credentials!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/login.js",
+    "groupTitle": "Login"
+  },
+  {
+    "type": "post",
     "url": "/users",
     "title": "Add a new user",
     "name": "AddUser",
