@@ -90,4 +90,32 @@ ALTER TABLE `homework_submit` ADD CONSTRAINT `homework_submit_fk1` FOREIGN KEY (
 
 ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
 
+# Dummy Data
 
+INSERT INTO users (email, password, privilege, name) VALUES ("admin@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 2, "Administrator"); # password = "parola"
+INSERT INTO users (email, password, privilege, name) VALUES ("teacher@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 1, "Teacher"); # password = "parola"
+
+INSERT INTO users (email, password, privilege, name) VALUES ("student@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+INSERT INTO users (email, password, privilege, name) VALUES ("student9@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+INSERT INTO users (email, password, privilege, name) VALUES ("student10@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+INSERT INTO users (email, password, privilege, name) VALUES ("student11@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+INSERT INTO users (email, password, privilege, name) VALUES ("student12@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+
+INSERT INTO groups (name, description) VALUES ("Clasa IX", "Grup de pregatire clasa a IX-a");
+INSERT INTO groups (name, description) VALUES ("Clasa X", "Grup de pregatire clasa a IX-a");
+INSERT INTO groups (name, description) VALUES ("Clasele XI-XII", "Grup de pregatire clasele a XI-a si a XII-a");
+
+# Add the teacher to all groups
+INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 1, 1);
+INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 2, 1);
+INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 3, 1);
+
+# Add students
+
+INSERT INTO group_user (userId, groupId, privilege) VALUES (3, 1, 0);
+INSERT INTO group_user (userId, groupId, privilege) VALUES (4, 1, 0);
+
+INSERT INTO group_user (userId, groupId, privilege) VALUES (5, 2, 0);
+
+INSERT INTO group_user (userId, groupId, privilege) VALUES (6, 2, 0);
+INSERT INTO group_user (userId, groupId, privilege) VALUES (7, 2, 0);
