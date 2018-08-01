@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
     You are on this page, so this means everything worked as it was supposed to.
     
     <br/>
-    The documentation is at <a href="https://andreigasparovici.github.io/cerc-info/">/docs</a>
+    The documentation is <a href="https://andreigasparovici.github.io/cerc-info/">here</a>
   `);
 });
 
