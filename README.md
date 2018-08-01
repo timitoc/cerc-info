@@ -6,7 +6,7 @@ This platform uses Node.js and MySQL.
 
 To run the project, install [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/install/). Then, run:
 
-* If it's the first time:
+* If it's the first time (or after you pulled some new modifications):
 ```sh
 docker-compose up --force-recreate --build
 ```

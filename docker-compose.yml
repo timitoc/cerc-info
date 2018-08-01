@@ -13,6 +13,7 @@ services:
      - DATABASE_USER=cercinfo
      - DATABASE_NAME=cercinfo
      - DATABASE_PASSWORD=CdafwanwjgcTEW7d
+     - JWT_SECRET=uBqETJWeedLXFb4MY5KYV2Z8ecVSCxxC
     volumes:
       - ".:/src/app"
     restart: always
