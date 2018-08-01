@@ -40,16 +40,18 @@ app.use(bodyParser.json());
 // Add logging
 app.use(morgan('dev'));
 
+app.use("/docs", express.static("../docs"));
+
 // Import routes
 const groupRoutes = require("./api/routes/groups.js");
-//const inviteRoutes = require("./api/routes/invite.js");
+const inviteRoutes = require("./api/routes/invite.js");
 const userRoutes = require("./api/routes/users.js");
 const loginRoutes = require("./api/routes/login.js");
 
 // Load API routes
 const apiRouter = express.Router();
 apiRouter.use("/groups", groupRoutes);
-//apiRouter.use("/invite", inviteRoutes);
+apiRouter.use("/invite", inviteRoutes);
 apiRouter.use("/users", userRoutes);
 apiRouter.use("/login", loginRoutes);
 

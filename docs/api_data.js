@@ -151,6 +151,108 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/invite/student",
+    "title": "Generate invitation for a student",
+    "name": "InviteStudent",
+    "group": "Invitations",
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"groupId\": 2\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n     \"succes\": true,\n     \"previewUrl\": \"https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/invite.js",
+    "groupTitle": "Invitations"
+  },
+  {
+    "type": "post",
+    "url": "/invite/teacher",
+    "title": "Generate invitation for a teacher",
+    "name": "InviteTeacher",
+    "group": "Invitations",
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"groupId\": 2\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n     \"succes\": true,\n     \"previewUrl\": \"https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/invite.js",
+    "groupTitle": "Invitations"
+  },
+  {
+    "type": "get",
+    "url": "/invite/validate/:inviteCode",
+    "title": "Validate invite code",
+    "name": "ValidateInviteCode",
+    "group": "Invitations",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "inviteCode",
+            "description": "<p>The invitation code</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n   valid: true,\n   email: \"john_smith@gmail.com\",\n   privilege: 0,\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error: Code not found",
+          "content": "HTTP 200\n{\n   error: \"Code not found!\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Error: Code already used",
+          "content": "HTTP 200\n{\n   error: \"Code already used!\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/invite.js",
+    "groupTitle": "Invitations"
+  },
+  {
+    "type": "post",
     "url": "/groups/:groupId/lessons",
     "title": "Add a new lesson",
     "name": "AddLesson",
