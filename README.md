@@ -25,7 +25,7 @@ Just make requests to [http://localhost:3000/api/INSERT_URL_HERE](http://localho
 
 ## Documentation
 
-To view the API docs, go to [http://localhost:3000/docs](http://localhost:3000/docs).
+To view the API docs, go to [https://andreigasparovici.github.io/cerc-info/](https://andreigasparovici.github.io/cerc-info/).
 
 ## Security
 

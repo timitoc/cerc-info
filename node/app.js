@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
     You are on this page, so this means everything worked as it was supposed to.
     
     <br/>
-    The documentation is at <a href="/docs">/docs</a>
+    The documentation is at <a href="https://andreigasparovici.github.io/cerc-info/">/docs</a>
   `);
 });
 
@@ -39,9 +39,6 @@ app.use(bodyParser.json());
 
 // Add logging
 app.use(morgan('dev'));
-
-// Docs static folder
-app.use("/docs", express.static("docs"));
 
 // Import routes
 const groupRoutes = require("./api/routes/groups.js");
