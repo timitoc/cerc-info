@@ -466,6 +466,34 @@
   },
   {
     "type": "post",
+    "url": "/register",
+    "title": "Register user account",
+    "name": "RegisterUserAccount",
+    "group": "Register",
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"name\": \"John Smith\",\n  \"password\": \"supersecurepassword\",\n  \"inviteCode\": \"NYKFV\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n   userId: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/register.js",
+    "groupTitle": "Register"
+  },
+  {
+    "type": "post",
     "url": "/users",
     "title": "Add a new user",
     "name": "AddUser",
