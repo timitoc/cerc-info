@@ -1,6 +1,6 @@
 CREATE TABLE `users` (
 	`userId` INT NOT NULL AUTO_INCREMENT,
-	`email` varchar(50) NOT NULL,
+	`email` varchar(50) NOT NULL UNIQUE,
 	`password` varchar(100) NOT NULL,
 	`privilege` INT NOT NULL DEFAULT '0',
 	`twoFactorSecret` varchar(50),
