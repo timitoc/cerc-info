@@ -151,6 +151,177 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/groups/:groupId/lessons",
+    "title": "Add a new lesson",
+    "name": "AddLesson",
+    "group": "Lessons",
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n \t\"name\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n \t\"tags\": \"dynammic programming,graph theory\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"groupId\": 2,\n   \"name\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Lessons"
+  },
+  {
+    "type": "delete",
+    "url": "/groups/:groupId/lessons/:lessonId",
+    "title": "Delete a lesson",
+    "name": "DeleteLesson",
+    "group": "Lessons",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "groupId",
+            "description": "<p>The group id (useless, kept only for symmetrical purposes)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "lessonId",
+            "description": "<p>The lesson id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Lessons"
+  },
+  {
+    "type": "get",
+    "url": "/groups/:groupId/lessons/:lessonId",
+    "title": "Get lesson by id",
+    "name": "GetLessonById",
+    "group": "Lessons",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "groupId",
+            "description": "<p>The group id (useless, kept only for symmetrical purposes)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "lessonId",
+            "description": "<p>The lesson id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"groupId\": 2,\n  \"name\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Lessons"
+  },
+  {
+    "type": "get",
+    "url": "/groups/:groupId/lessons",
+    "title": "Get all lessons from a group",
+    "name": "GetLessons",
+    "group": "Lessons",
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"groupId\": 2,\n       \"name\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"groupId\": 2,\n       \"name\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Lessons"
+  },
+  {
+    "type": "put",
+    "url": "/groups/:groupId/lessons/:lessonId",
+    "title": "Modify a lesson",
+    "name": "ModifyLesson",
+    "group": "Lessons",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "groupId",
+            "description": "<p>The group id (useless, kept only for symmetrical purposes)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "lessonId",
+            "description": "<p>The lesson id</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example (only use the fields that you want to update):",
+          "content": "{\n  \"name\": \"Noul nume al lecţiei\",\n  \"content\": \"Noul conţinut\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"groupId\": 2,\n   \"name\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Lessons"
+  },
+  {
+    "type": "post",
     "url": "/login",
     "title": "Authenticate user",
     "name": "Login",
