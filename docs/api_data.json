@@ -682,6 +682,38 @@
   },
   {
     "type": "post",
+    "url": "/me",
+    "title": "Get current user information",
+    "name": "Me",
+    "group": "Me",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privileg: 1\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/me.js",
+    "groupTitle": "Me"
+  },
+  {
+    "type": "post",
     "url": "/register",
     "title": "Register user account",
     "name": "RegisterUserAccount",

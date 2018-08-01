@@ -48,6 +48,7 @@ const inviteRoutes = require("./api/routes/invite.js");
 const userRoutes = require("./api/routes/users.js");
 const loginRoutes = require("./api/routes/login.js");
 const registerRoutes = require("./api/routes/register.js");
+const meRoutes = require("./api/routes/me.js");
 
 // Load API routes
 const apiRouter = express.Router();
@@ -56,6 +57,7 @@ apiRouter.use("/invite", inviteRoutes);
 apiRouter.use("/users", userRoutes);
 apiRouter.use("/login", loginRoutes);
 apiRouter.use("/register", registerRoutes);
+apiRouter.use("/me", meRoutes);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);

@@ -17,10 +17,3 @@ services:
     volumes:
       - ".:/src/app"
     restart: always
-  adminer:
-    image: adminer
-    depends_on:
-     - mysql
-    restart: always
-    ports:
-      - 8080:8080
