@@ -10,7 +10,7 @@ const jwtFilter = require("../filters/jwt-filter.js");
 const router = express.Router();
 
 /**
- * @api {post} /me Get current user information
+ * @api {get} /me Get current user information
  * @apiName Me
  * @apiGroup Me
  *

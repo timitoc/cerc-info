@@ -681,7 +681,7 @@ define({ "api": [
     "groupTitle": "Login"
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/me",
     "title": "Get current user information",
     "name": "Me",
