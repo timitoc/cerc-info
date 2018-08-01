@@ -7,12 +7,19 @@ const nodemailer = require('nodemailer');
 
 const { query } = global;
 
+const jwtFilter = require("../filters/jwt-filter.js");
+const privilegeFilter = require("../filters/privilege-filter.js");
+const adminFilter = privilegeFilter(2);
+
 const router = express.Router();
 
 /**
  * @api {post} /invite/teacher Generate invitation for a teacher
  * @apiName InviteTeacher
  * @apiGroup Invitations
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParamExample {json} Request example:
  * {
@@ -27,7 +34,7 @@ const router = express.Router();
      "previewUrl": "https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc"
  *  }
  */
-router.post("/teacher", async (req, res) => {
+router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId } = req.body;
   const codeValue = randomstring.generate(5).toUpperCase();
   const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",
@@ -77,6 +84,9 @@ router.post("/teacher", async (req, res) => {
  * @apiName InviteStudent
  * @apiGroup Invitations
  *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
  * @apiParamExample {json} Request example:
  * {
  *   "email": "john_smith@gmail.com",
@@ -90,7 +100,7 @@ router.post("/teacher", async (req, res) => {
      "previewUrl": "https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc"
  *  }
  */
-router.post("/student", async (req, res) => {
+router.post("/student", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId } = req.body;
   const codeValue = randomstring.generate(5).toUpperCase();
   const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",

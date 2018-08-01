@@ -6,10 +6,16 @@ const { query } = global;
 
 const router = express.Router();
 
+const jwtFilter = require("../filters/jwt-filter.js");
+const privilegeFilter = require("../filters/privilege-filter.js");
+const adminFilter = privilegeFilter(2);
+
 /**
  * @api {get} /users Get all users
  * @apiName GetUsers
  * @apiGroup Users
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
@@ -28,7 +34,7 @@ const router = express.Router();
  *     }
  *   ]
  */
-router.get("/", async (req, res) => {
+router.get("/", jwtFilter, adminFilter, async (req, res) => {
   res.json(await query("SELECT userId, email, name, privilege FROM users"));
 });
 
@@ -38,6 +44,9 @@ router.get("/", async (req, res) => {
  * @apiGroup Users
  *
  * @apiParam {String} userId The user id
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  * 
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
@@ -48,7 +57,7 @@ router.get("/", async (req, res) => {
  *    privilege: 1
  * }
  */
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", jwtFilter, adminFilter, async (req, res) => {
   const { userId } = req.params;
   res.json(R.head(await query("SELECT userId, email, name, privilege FROM users WHERE userId = ?", userId)));
 });
@@ -65,6 +74,9 @@ router.get("/:userId", async (req, res) => {
  *   "privilege": 1
  *   "name": "John Smith"
  * }
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  * 
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
@@ -75,7 +87,7 @@ router.get("/:userId", async (req, res) => {
  *    privilege: 1
  * }
  */
-router.post("/", async (req, res) => {
+router.post("/", jwtFilter, adminFilter, async (req, res) => {
   const { email, password, privilege, name } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
 
@@ -91,6 +103,9 @@ router.post("/", async (req, res) => {
  * @api {put} /users/:userId Modify a user
  * @apiName ModifyUser
  * @apiGroup Users
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {Integer} userId The user id
  *
@@ -111,7 +126,7 @@ router.post("/", async (req, res) => {
  *    privilege: 1
  * }
  */
-router.put("/:userId", async (req, res) => {
+router.put("/:userId", jwtFilter, adminFilter, async (req, res) => {
   const { userId } = req.params;
 
   const values = Array
@@ -141,6 +156,9 @@ router.put("/:userId", async (req, res) => {
  * @apiName UserGroup
  * @apiGroup Users
  *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
  * @apiParam {Integer} userId The user id
  *
  * @apiSuccessExample {json} Success response:
@@ -149,7 +167,7 @@ router.put("/:userId", async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:userId", async (req, res) => {
+router.delete("/:userId", jwtFilter, adminFilter, async (req, res) => {
   const { userId } = req.params;
 
   await query("DELETE FROM users WHERE userId = ?", userId);

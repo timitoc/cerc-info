@@ -7,12 +7,13 @@ function privilegeFilter(privilege) {
         .status(500)
         .json({ error: "Token not decoded!" });
     }
-    const privilege = req.decodedToken.privilege;
-    if (privilege !== privilege) {
+
+    if (req.decodedToken.privilege < privilege) {
       return res
         .status(401)
         .json({ error: "You don't have the rights required to access this route!" });
     }
+
     next();
   };
 }

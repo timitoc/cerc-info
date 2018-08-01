@@ -5,6 +5,24 @@
     "title": "Add a new group",
     "name": "AddGroup",
     "group": "Groups",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "examples": [
         {
@@ -33,6 +51,24 @@
     "title": "Delete a group",
     "name": "DeleteGroup",
     "group": "Groups",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -65,6 +101,24 @@
     "title": "Get group by id",
     "name": "GetGroupById",
     "group": "Groups",
+    "permission": [
+      {
+        "name": "anyone"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -97,6 +151,24 @@
     "title": "Get all groups",
     "name": "GetGroups",
     "group": "Groups",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
@@ -116,6 +188,24 @@
     "title": "Modify a group",
     "name": "ModifyGroup",
     "group": "Groups",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -155,6 +245,24 @@
     "title": "Generate invitation for a student",
     "name": "InviteStudent",
     "group": "Invitations",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "examples": [
         {
@@ -183,6 +291,24 @@
     "title": "Generate invitation for a teacher",
     "name": "InviteTeacher",
     "group": "Invitations",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "examples": [
         {
@@ -257,6 +383,24 @@
     "title": "Add a new lesson",
     "name": "AddLesson",
     "group": "Lessons",
+    "permission": [
+      {
+        "name": "teacher"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "examples": [
         {
@@ -285,6 +429,24 @@
     "title": "Delete a lesson",
     "name": "DeleteLesson",
     "group": "Lessons",
+    "permission": [
+      {
+        "name": "teacher"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -324,6 +486,24 @@
     "title": "Get lesson by id",
     "name": "GetLessonById",
     "group": "Lessons",
+    "permission": [
+      {
+        "name": "anyone"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -363,6 +543,24 @@
     "title": "Get all lessons from a group",
     "name": "GetLessons",
     "group": "Lessons",
+    "permission": [
+      {
+        "name": "anyone"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
@@ -382,6 +580,24 @@
     "title": "Modify a lesson",
     "name": "ModifyLesson",
     "group": "Lessons",
+    "permission": [
+      {
+        "name": "teacher"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -507,6 +723,24 @@
         }
       ]
     },
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
@@ -526,6 +760,24 @@
     "title": "Get all users",
     "name": "GetUsers",
     "group": "Users",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
@@ -558,6 +810,24 @@
         ]
       }
     },
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
@@ -577,6 +847,24 @@
     "title": "Modify a user",
     "name": "ModifyUser",
     "group": "Users",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -616,6 +904,24 @@
     "title": "Delete a user",
     "name": "UserGroup",
     "group": "Users",
+    "permission": [
+      {
+        "name": "administrator"
+      }
+    ],
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [

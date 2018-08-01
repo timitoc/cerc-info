@@ -5,10 +5,18 @@ const router = express.Router();
 
 const { query } = global;
 
+const jwtFilter = require("../filters/jwt-filter.js");
+const privilegeFilter = require("../filters/privilege-filter.js");
+const adminFilter = privilegeFilter(2);
+const teacherFilter = privilegeFilter(1);
+
 /**
  * @api {get} /groups Get all groups
  * @apiName GetGroups
  * @apiGroup Groups
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
@@ -24,7 +32,7 @@ const { query } = global;
  *     }
  *   ]
  */
-router.get("/", async (req, res) => {
+router.get("/", jwtFilter, adminFilter, async (req, res) => {
   res.json(await query("SELECT * FROM groups"));
 });
 
@@ -32,6 +40,9 @@ router.get("/", async (req, res) => {
  * @api {post} /groups Add a new group
  * @apiName AddGroup
  * @apiGroup Groups
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParamExample {json} Request example:
  * {
@@ -47,7 +58,7 @@ router.get("/", async (req, res) => {
  *    description: "Descrierea grupului nou creat" 
  * }
  */
-router.post("/", async (req, res) => {
+router.post("/", jwtFilter, adminFilter, async (req, res) => {
   const { name, description } = req.body;
   const { insertId } = await query("INSERT INTO groups (name, description) VALUES (?, ?)", [ name, description ]);
   res
@@ -60,6 +71,9 @@ router.post("/", async (req, res) => {
  * @apiName GetGroupById
  * @apiGroup Groups
  *
+ * @apiPermission anyone
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
  * @apiParam {String} groupId The group id
  * 
  * @apiSuccessExample {json} Success response:
@@ -70,7 +84,7 @@ router.post("/", async (req, res) => {
  *    description: "Descrierea grupului" 
  * }
  */
-router.get("/:groupId", async (req, res) => {
+router.get("/:groupId", jwtFilter, async (req, res) => {
   const { groupId } = req.params;
   res.json(R.head(await query("SELECT * FROM groups WHERE groupId = ?", groupId)));
 });
@@ -79,6 +93,9 @@ router.get("/:groupId", async (req, res) => {
  * @api {put} /groups/:groupId Modify a group
  * @apiName ModifyGroup
  * @apiGroup Groups
+ *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {Integer} groupId The group id
  *
@@ -96,7 +113,7 @@ router.get("/:groupId", async (req, res) => {
  *    description: "Noua descriere" 
  * }
  */
-router.put("/:groupId", async (req, res) => {
+router.put("/:groupId", jwtFilter, adminFilter, async (req, res) => {
   const { groupId } = req.params;
 
   const values = Array
@@ -121,6 +138,9 @@ router.put("/:groupId", async (req, res) => {
  * @apiName DeleteGroup
  * @apiGroup Groups
  *
+ * @apiPermission administrator
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
  * @apiParam {Integer} groupId The group id
  *
  * @apiSuccessExample {json} Success response:
@@ -129,7 +149,7 @@ router.put("/:groupId", async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:groupId", async (req, res) => {
+router.delete("/:groupId", jwtFilter, adminFilter, async (req, res) => {
   const { groupId } = req.params;
 
   await query("DELETE FROM groups WHERE groupId = ?", groupId);
@@ -142,6 +162,9 @@ router.delete("/:groupId", async (req, res) => {
  * @api {get} /groups/:groupId/lessons Get all lessons from a group
  * @apiName GetLessons
  * @apiGroup Lessons
+ *
+ * @apiPermission anyone
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
@@ -166,7 +189,7 @@ router.delete("/:groupId", async (req, res) => {
  *    }
  * ]
  */
-router.get("/:groupId/lessons", async (req, res) => {
+router.get("/:groupId/lessons", jwtFilter, async (req, res) => {
   const { groupId } = req.params;
   res.json(await query("SELECT * FROM lessons WHERE groupId = ?", groupId));
 });
@@ -175,6 +198,9 @@ router.get("/:groupId/lessons", async (req, res) => {
  * @api {get} /groups/:groupId/lessons/:lessonId Get lesson by id
  * @apiName GetLessonById
  * @apiGroup Lessons
+ *
+ * @apiPermission anyone
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {String} groupId The group id (useless, kept only for symmetrical purposes)
  * @apiParam {String} lessonId The lesson id
@@ -191,7 +217,7 @@ router.get("/:groupId/lessons", async (req, res) => {
  *   "dateAdded": "2018-07-31T21:00:00.000Z"
  * }
  */
-router.get("/:groupId/lessons/:lessonId", async (req, res) => {
+router.get("/:groupId/lessons/:lessonId", jwtFilter, async (req, res) => {
   const { groupId, lessonId } = req.params;
   res.json(R.head(await query("SELECT * FROM lessons WHERE lessonId = ?", lessonId)));
 });
@@ -200,6 +226,9 @@ router.get("/:groupId/lessons/:lessonId", async (req, res) => {
  * @api {post} /groups/:groupId/lessons Add a new lesson
  * @apiName AddLesson
  * @apiGroup Lessons
+ *
+ * @apiPermission teacher
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParamExample {json} Request example:
  * {
@@ -221,7 +250,7 @@ router.get("/:groupId/lessons/:lessonId", async (req, res) => {
  *    "dateAdded": "2018-07-31T21:00:00.000Z"
  * }
  */
-router.post("/:groupId/lessons", async (req, res) => {
+router.post("/:groupId/lessons", jwtFilter, teacherFilter, async (req, res) => {
   const { groupId } = req.params;
   const { name, content, authorId, tags } = req.body;
   const { insertId } = await query("INSERT INTO lessons (groupId, name, content, authorId, tags, dateAdded) VALUES (?, ?, ?, ?, ?, ?)",
@@ -236,6 +265,9 @@ router.post("/:groupId/lessons", async (req, res) => {
  * @api {put} /groups/:groupId/lessons/:lessonId Modify a lesson
  * @apiName ModifyLesson
  * @apiGroup Lessons
+ *
+ * @apiPermission teacher
+ * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {String} groupId The group id (useless, kept only for symmetrical purposes)
  * @apiParam {String} lessonId The lesson id
@@ -258,7 +290,7 @@ router.post("/:groupId/lessons", async (req, res) => {
  *    "dateAdded": "2018-07-31T21:00:00.000Z"
  *  }
  */
-router.put("/:groupId/lessons/:lessonId", async (req, res) => {
+router.put("/:groupId/lessons/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
   const { groupId, lessonId } = req.params;
 
   const values = Array
@@ -283,6 +315,9 @@ router.put("/:groupId/lessons/:lessonId", async (req, res) => {
  * @apiName DeleteLesson
  * @apiGroup Lessons
  *
+ * @apiPermission teacher
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
  * @apiParam {String} groupId The group id (useless, kept only for symmetrical purposes)
  * @apiParam {String} lessonId The lesson id
  *
@@ -292,7 +327,7 @@ router.put("/:groupId/lessons/:lessonId", async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:groupId/lessons/:lessonId", async (req, res) => {
+router.delete("/:groupId/lessons/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
   const { groupId, lessonId } = req.params;
 
   await query("DELETE FROM lessons WHERE lessonId = ?", lessonId);
