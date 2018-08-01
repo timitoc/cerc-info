@@ -4,7 +4,7 @@ const apidoc = require("gulp-apidoc");
 gulp.task("apidoc", (done) => {
   apidoc({
     src: "./api/routes",
-    dest: "./docs"
+    dest: "../docs"
   }, done);
 });
 
