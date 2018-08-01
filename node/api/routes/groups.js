@@ -1,7 +1,7 @@
 const express = require("express");
-const router = express.Router();
-
 const R = require("ramda");
+
+const router = express.Router();
 
 const { query } = global;
 

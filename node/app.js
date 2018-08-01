@@ -45,12 +45,14 @@ app.use("/docs", express.static("docs"));
 
 // Import routes
 const groupRoutes = require("./api/routes/groups.js");
-const inviteRoutes = require("./api/routes/invite.js");
+//const inviteRoutes = require("./api/routes/invite.js");
+const userRoutes = require("./api/routes/users.js");
 
 // Load API routes
 const apiRouter = express.Router();
 apiRouter.use("/groups", groupRoutes);
-apiRouter.use("/invite", inviteRoutes);
+//apiRouter.use("/invite", inviteRoutes);
+apiRouter.use("/users", userRoutes);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);
