@@ -18,7 +18,7 @@ CREATE TABLE `groups` (
 CREATE TABLE `group_user` (
 	`groupId` INT NOT NULL,
 	`userId` INT NOT NULL,
-	`role` INT NOT NULL DEFAULT '0'
+	`privilege` INT NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE `lessons` (
@@ -119,3 +119,8 @@ INSERT INTO group_user (userId, groupId, privilege) VALUES (5, 2, 0);
 
 INSERT INTO group_user (userId, groupId, privilege) VALUES (6, 2, 0);
 INSERT INTO group_user (userId, groupId, privilege) VALUES (7, 2, 0);
+
+# Add lessons
+
+INSERT INTO lessons(groupId, name, content, authorId, tags, dateAdded) VALUES (1, "Deque", "Lectie despre deque", 2, "structuri de date,stiva,coada,deque");
+INSERT INTO lessons(groupId, name, content, authorId, tags, dateAdded) VALUES (1, "Invers modular", "Continut", 2, "matematica,aritmetica modulara");
