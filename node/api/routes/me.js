@@ -26,8 +26,10 @@ const router = express.Router();
  * }
  */
 
-router.get("/", jwtFilter, (req, res) => {
-  res.json(req.decodedToken);
+router.get("/", jwtFilter, async (req, res) => {
+  const { userId } = req.decodedToken;
+  const group = R.head(await query("SELECT groupId FROM group_user WHERE userId = ? LIMIT 1", userId));
+  res.json(R.assoc("groupId", group.groupId, req.decodedToken));
 });
 
 module.exports = router;

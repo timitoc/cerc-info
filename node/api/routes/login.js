@@ -39,7 +39,7 @@ const router = express.Router();
  */
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
-  const user = R.head(await query("SELECT name, privilege, password FROM users WHERE email = ?", email));
+  const user = R.head(await query("SELECT userId, name, privilege, password FROM users WHERE email = ?", email));
   if (R.isNil(user)) 
     return res.json({
       error: "User account not found!"
@@ -49,7 +49,8 @@ router.post("/", async (req, res) => {
     const tokenContent = {
       email,
       name: user.name,
-      privilege: user.privilege
+      privilege: user.privilege,
+      userId: user.userId
     };
     const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
     return res.json({ token });
