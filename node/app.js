@@ -23,11 +23,18 @@ const morgan = require("morgan");
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send(`
     <h3>Welcome!</h3>
     You are on this page, so this means everything worked as it was supposed to.
-    
+
     <br/>
     The documentation is <a href="https://andreigasparovici.github.io/cerc-info/">here</a>
   `);

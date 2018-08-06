@@ -189,9 +189,15 @@ router.delete("/:groupId", jwtFilter, adminFilter, async (req, res) => {
  *    }
  * ]
  */
-router.get("/:groupId/lessons", jwtFilter, async (req, res) => {
+router.get("/:groupId/lessons", /*jwtFilter,*/ async (req, res) => {
   const { groupId } = req.params;
-  res.json(await query("SELECT * FROM lessons WHERE groupId = ?", groupId));
+  const { tags } = req.query;
+  if (R.isNil(tags) || R.isEmpty(tags)) {
+    return res.json(await query("SELECT * FROM lessons WHERE groupId = ?", groupId));
+  }
+  const splittedTags = tags.split(",");
+  const sql = `SELECT * FROM lessons WHERE groupId = ? AND (${splittedTags.map(item => "tags REGEXP ',*"+item+".*'").join(" OR ")})`;
+  res.send(sql);
 });
 
 /**
