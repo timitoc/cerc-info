@@ -703,7 +703,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privileg: 1\n}",
+          "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privileg: 1,\n  groupId: 1,\n  userId: 3\n}",
           "type": "json"
         }
       ]
