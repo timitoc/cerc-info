@@ -22,14 +22,16 @@ const router = express.Router();
  * {
  *   email: "john_smith@gmail.com",
  *   name: "John Smith",
- *   privileg: 1
+ *   privileg: 1,
+ *   groupId: 1,
+ *   userId: 3
  * }
  */
 
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const group = R.head(await query("SELECT groupId FROM group_user WHERE userId = ? LIMIT 1", userId));
-  res.json(R.assoc("groupId", group.groupId, req.decodedToken));
+  res.json(R.assoc("userId", userId, R.assoc("groupId", group.groupId, req.decodedToken)));
 });
 
 module.exports = router;
