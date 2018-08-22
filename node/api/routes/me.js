@@ -22,7 +22,7 @@ const router = express.Router();
  * {
  *   email: "john_smith@gmail.com",
  *   name: "John Smith",
- *   privileg: 1,
+ *   privilege: 1,
  *   groupId: 1,
  *   userId: 3
  * }
@@ -31,7 +31,11 @@ const router = express.Router();
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const group = R.head(await query("SELECT groupId FROM group_user WHERE userId = ? LIMIT 1", userId));
-  res.json(R.assoc("userId", userId, R.assoc("groupId", group.groupId, req.decodedToken)));
+  if (!R.isNil(group) && !R.isNil(group.groupId)) {
+    res.json(R.assoc("groupId", group.groupId, req.decodedToken));
+  } else {
+    res.json(req.decodedToken);
+  }
 });
 
 module.exports = router;
