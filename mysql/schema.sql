@@ -18,7 +18,8 @@ CREATE TABLE `groups` (
 CREATE TABLE `group_user` (
 	`groupId` INT NOT NULL,
 	`userId` INT NOT NULL,
-	`privilege` INT NOT NULL DEFAULT '0'
+	`privilege` INT NOT NULL DEFAULT '0',
+	`active` INT NOT NULL DEFAULT '1'
 );
 
 CREATE TABLE `lessons` (
