@@ -1,127 +1,134 @@
 CREATE TABLE `users` (
-	`userId` INT NOT NULL AUTO_INCREMENT,
-	`email` varchar(50) NOT NULL UNIQUE,
-	`password` varchar(100) NOT NULL,
-	`privilege` INT NOT NULL DEFAULT '0',
-	`twoFactorSecret` varchar(50),
-	`name` varchar(50) NOT NULL,
-	PRIMARY KEY (`userId`)
-);
-
-CREATE TABLE `groups` (
-	`groupId` INT NOT NULL AUTO_INCREMENT,
-	`name` varchar(50) NOT NULL,
-	`description` varchar(500) NOT NULL,
-	PRIMARY KEY (`groupId`)
-);
-
-CREATE TABLE `group_user` (
-	`groupId` INT NOT NULL,
-	`userId` INT NOT NULL,
-	`privilege` INT NOT NULL DEFAULT '0',
-	`active` INT NOT NULL DEFAULT '1'
+	`user_id` INT NOT NULL AUTO_INCREMENT,
+	`privilege` INT NOT NULL,
+	`email` varchar(50) NOT NULL,
+	`password` varchar(200) NOT NULL,
+	`name` varchar(20) NOT NULL,
+	`active_group` INT,
+	PRIMARY KEY (`user_id`)
 );
 
 CREATE TABLE `lessons` (
-	`lessonId` INT NOT NULL AUTO_INCREMENT,
-	`groupId` INT NOT NULL,
-	`name` varchar(100) NOT NULL,
-	`content` TEXT NOT NULL,
-	`authorId` INT NOT NULL,
-	`tags` varchar(50) NOT NULL,
-	`dateAdded` DATE NOT NULL,
-	PRIMARY KEY (`lessonId`)
+	`lesson_id` INT NOT NULL AUTO_INCREMENT,
+	`title` varchar(50) NOT NULL,
+	`author_id` INT NOT NULL,
+	PRIMARY KEY (`lesson_id`)
+);
+
+CREATE TABLE `groups` (
+	`group_id` INT NOT NULL AUTO_INCREMENT,
+	`start_date` DATE NOT NULL,
+	`end_date` DATE NOT NULL,
+	`deleted` BINARY NOT NULL DEFAULT '0',
+	PRIMARY KEY (`group_id`)
+);
+
+CREATE TABLE `user_group` (
+	`user_group_id` INT NOT NULL AUTO_INCREMENT,
+	`user_id` INT NOT NULL,
+	`group_id` INT NOT NULL,
+	PRIMARY KEY (`user_group_id`)
+);
+
+CREATE TABLE `lesson_comments` (
+	`comment_id` INT NOT NULL AUTO_INCREMENT,
+	`lesson_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	PRIMARY KEY (`comment_id`)
+);
+
+CREATE TABLE `questions` (
+	`question_id` INT NOT NULL AUTO_INCREMENT,
+	`lesson_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	PRIMARY KEY (`question_id`)
+);
+
+CREATE TABLE `answers` (
+	`answer_id` INT NOT NULL AUTO_INCREMENT,
+	`question_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	PRIMARY KEY (`answer_id`)
 );
 
 CREATE TABLE `attendance` (
-	`attendanceId` INT NOT NULL AUTO_INCREMENT,
+	`attendance_id` INT NOT NULL AUTO_INCREMENT,
+	`group_id` INT NOT NULL,
 	`date` DATE NOT NULL,
-	`userId` INT NOT NULL,
-	`groupId` INT NOT NULL,
-	PRIMARY KEY (`attendanceId`)
+	PRIMARY KEY (`attendance_id`)
+);
+
+CREATE TABLE `attendance_users` (
+	`attendance_id` INT NOT NULL,
+	`user_id` INT NOT NULL
 );
 
 CREATE TABLE `homework` (
-	`homeworkId` INT NOT NULL AUTO_INCREMENT,
-	`groupId` INT NOT NULL,
+	`homework_id` INT NOT NULL AUTO_INCREMENT,
+	`group_id` INT NOT NULL,
 	`title` varchar(50) NOT NULL,
-	`content` TEXT NOT NULL,
-	`deadline` DATE NOT NULL,
-	`dateAdded` DATE NOT NULL,
-	PRIMARY KEY (`homeworkId`)
+	`description` varchar(500) NOT NULL,
+	`tags` varchar(50) NOT NULL,
+	PRIMARY KEY (`homework_id`)
 );
 
-CREATE TABLE `homework_submit` (
-	`submitId` INT NOT NULL AUTO_INCREMENT,
-	`content` TEXT NOT NULL,
-	`homeworkId` INT NOT NULL,
-	`userId` INT NOT NULL,
-	`dateAdded` DATE NOT NULL,
-	`status` INT NOT NULL,
-	PRIMARY KEY (`submitId`)
+CREATE TABLE `tasks` (
+	`task_id` INT NOT NULL AUTO_INCREMENT,
+	`homework_id` INT NOT NULL,
+	`type` INT NOT NULL,
+	`content` varchar(500) NOT NULL,
+	PRIMARY KEY (`task_id`)
 );
 
-CREATE TABLE `invitation_codes` (
-	`code_id` INT NOT NULL AUTO_INCREMENT,
-	`code` varchar(200) NOT NULL,
-	`groupId` INT NOT NULL,
-	`privilege` INT NOT NULL,
-	`email` varchar(50) NOT NULL,
-	`used` BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY (`code_id`)
+CREATE TABLE `submit` (
+	`submit_id` INT NOT NULL AUTO_INCREMENT,
+	`homework_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	PRIMARY KEY (`submit_id`)
 );
 
-ALTER TABLE `group_user` ADD CONSTRAINT `group_user_fk0` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
+CREATE TABLE `submit_task` (
+	`submit_id` INT NOT NULL,
+	`task_id` INT NOT NULL,
+	`content` TEXT NOT NULL
+);
 
-ALTER TABLE `group_user` ADD CONSTRAINT `group_user_fk1` FOREIGN KEY (`userId`) REFERENCES `users`(`userId`);
+ALTER TABLE `users` ADD CONSTRAINT `users_fk0` FOREIGN KEY (`active_group`) REFERENCES `user_group`(`user_group_id`);
 
-ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
+ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
 
-ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk1` FOREIGN KEY (`authorId`) REFERENCES `users`(`userId`);
+ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-ALTER TABLE `attendance` ADD CONSTRAINT `attendance_fk0` FOREIGN KEY (`userId`) REFERENCES `users`(`userId`);
+ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk1` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
-ALTER TABLE `attendance` ADD CONSTRAINT `attendance_fk1` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
+ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
 
-ALTER TABLE `homework` ADD CONSTRAINT `homework_fk0` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
+ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-ALTER TABLE `homework_submit` ADD CONSTRAINT `homework_submit_fk0` FOREIGN KEY (`homeworkId`) REFERENCES `homework`(`homeworkId`);
+ALTER TABLE `questions` ADD CONSTRAINT `questions_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
 
-ALTER TABLE `homework_submit` ADD CONSTRAINT `homework_submit_fk1` FOREIGN KEY (`userId`) REFERENCES `users`(`userId`);
+ALTER TABLE `questions` ADD CONSTRAINT `questions_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`groupId`) REFERENCES `groups`(`groupId`);
+ALTER TABLE `answers` ADD CONSTRAINT `answers_fk0` FOREIGN KEY (`question_id`) REFERENCES `questions`(`question_id`);
 
-# Dummy Data
+ALTER TABLE `answers` ADD CONSTRAINT `answers_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-INSERT INTO users (email, password, privilege, name) VALUES ("admin@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 2, "Administrator"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("teacher@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 1, "Teacher"); # password = "parola"
+ALTER TABLE `attendance` ADD CONSTRAINT `attendance_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
-INSERT INTO users (email, password, privilege, name) VALUES ("student@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student9@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student10@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student11@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student12@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
+ALTER TABLE `attendance_users` ADD CONSTRAINT `attendance_users_fk0` FOREIGN KEY (`attendance_id`) REFERENCES `attendance`(`attendance_id`);
 
-INSERT INTO groups (name, description) VALUES ("Clasa IX", "Grup de pregatire clasa a IX-a");
-INSERT INTO groups (name, description) VALUES ("Clasa X", "Grup de pregatire clasa a IX-a");
-INSERT INTO groups (name, description) VALUES ("Clasele XI-XII", "Grup de pregatire clasele a XI-a si a XII-a");
+ALTER TABLE `attendance_users` ADD CONSTRAINT `attendance_users_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-# Add the teacher to all groups
-INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 1, 1);
-INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 2, 1);
-INSERT INTO group_user (userId, groupId, privilege) VALUES (2, 3, 1);
+ALTER TABLE `homework` ADD CONSTRAINT `homework_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
-# Add students
+ALTER TABLE `tasks` ADD CONSTRAINT `tasks_fk0` FOREIGN KEY (`homework_id`) REFERENCES `homework`(`homework_id`);
 
-INSERT INTO group_user (userId, groupId, privilege) VALUES (3, 1, 0);
-INSERT INTO group_user (userId, groupId, privilege) VALUES (4, 1, 0);
+ALTER TABLE `submit` ADD CONSTRAINT `submit_fk0` FOREIGN KEY (`homework_id`) REFERENCES `homework`(`homework_id`);
 
-INSERT INTO group_user (userId, groupId, privilege) VALUES (5, 2, 0);
+ALTER TABLE `submit` ADD CONSTRAINT `submit_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
-INSERT INTO group_user (userId, groupId, privilege) VALUES (6, 2, 0);
-INSERT INTO group_user (userId, groupId, privilege) VALUES (7, 2, 0);
+ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk0` FOREIGN KEY (`submit_id`) REFERENCES `submit`(`submit_id`);
 
-# Add lessons
+ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk1` FOREIGN KEY (`task_id`) REFERENCES `tasks`(`task_id`);
 
-INSERT INTO lessons(groupId, name, content, authorId, tags, dateAdded) VALUES (1, "Deque", "Lectie despre deque", 2, "structuri de date,stiva,coada,deque");
-INSERT INTO lessons(groupId, name, content, authorId, tags, dateAdded) VALUES (1, "Invers modular", "Continut", 2, "matematica,aritmetica modulara");
+
