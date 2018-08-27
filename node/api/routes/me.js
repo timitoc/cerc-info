@@ -64,7 +64,7 @@ router.get("/", jwtFilter, async (req, res) => {
  *   success: true
  * }
  */
-router.post("/active-group", jwtFiler, async (req, res) => {
+router.post("/active-group", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const { groupId } = req.body;
 
