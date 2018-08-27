@@ -747,6 +747,115 @@
     "groupTitle": "Me"
   },
   {
+    "type": "get",
+    "url": "/recommended-lessons",
+    "title": "Get the recommended lessons for your active group",
+    "name": "Recommended",
+    "group": "Recommended",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/recommended-lessons.js",
+    "groupTitle": "Recommended"
+  },
+  {
+    "type": "post",
+    "url": "/recommended_lessons",
+    "title": "Add a recommended lesson to your active group",
+    "name": "Recommended",
+    "group": "Recommended",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"lessonId\": 7\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/recommended-lessons.js",
+    "groupTitle": "Recommended"
+  },
+  {
+    "type": "delete",
+    "url": "/recommended_lessons/:lessonId",
+    "title": "Remove a recommended lesson from your active group",
+    "name": "Recommended",
+    "group": "Recommended",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "lessonId",
+            "description": "<p>The lesson id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/recommended-lessons.js",
+    "groupTitle": "Recommended"
+  },
+  {
     "type": "post",
     "url": "/register",
     "title": "Register user account",
