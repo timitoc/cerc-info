@@ -6,6 +6,8 @@ const router = express.Router();
 
 const { query } = global;
 
+const jwtFilter = require("../filters/jwt-filter.js");
+
 /**
  * @api {get} /lessons Get all lessons
  * @apiName GetLessons
