@@ -57,6 +57,7 @@ const userRoutes = require("./api/routes/users.js");
 const loginRoutes = require("./api/routes/login.js");
 const registerRoutes = require("./api/routes/register.js");
 const meRoutes = require("./api/routes/me.js");
+const recommendedLessonsRoutes = require("./api/routes/recommended-lessons.js");
 
 // Load API routes
 const apiRouter = express.Router();
@@ -66,6 +67,7 @@ apiRouter.use("/users", userRoutes);
 apiRouter.use("/login", loginRoutes);
 apiRouter.use("/register", registerRoutes);
 apiRouter.use("/me", meRoutes);
+apiRouter.use("/recommended-lessons", recommendedLessonsRoutes);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);
