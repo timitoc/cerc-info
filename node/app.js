@@ -1,9 +1,10 @@
 const mysql = require("mysql");
 const util = require("util");
+const fs = require("fs");
 
-if (!process.env.DOCKER) {
-  require("dotenv").config();
-}
+//require("dotenv").config();
+fs.readdirSync("./env")
+  .forEach(file => process.env[file.replace(".env", "")] =  fs.readFileSync(`./env/${file}`, 'utf-8').trim());
 
 const connection = mysql.createConnection({
   host: process.env.DATABASE_HOST,

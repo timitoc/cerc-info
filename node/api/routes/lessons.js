@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
  * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {String} lessonId The lesson id
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {
@@ -80,7 +80,7 @@ router.get("/:id", async (req, res) => {
  *  	"authorId": 2,
  *  	"tags": "dynammic programming,graph theory"
  * }
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
@@ -141,7 +141,7 @@ router.put("/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  const keyEnumeration = values.map(item => `${item.key}=?`).join(', '); 
+  const keyEnumeration = values.map(item => `${item.key}=?`).join(', ');
   const valueEnumeration = values.map(item => item.value);
 
   await query(`UPDATE lessons SET ${keyEnumeration} WHERE lessonId = ?`, R.append(lessonId, valueEnumeration));
@@ -172,7 +172,7 @@ router.delete("/:groupId/lessons/:lessonId", jwtFilter, teacherFilter, async (re
 
   await query("UPDATE lessons SET deleted = 1 WHERE lessonId = ?", lessonId);
   res.status(201).json({
-    success: true 
+    success: true
   });
 });
 

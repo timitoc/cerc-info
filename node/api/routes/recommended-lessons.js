@@ -5,6 +5,8 @@ const router = express.Router();
 
 const { query } = global;
 
+const jwtFilter = require("../filters/jwt-filter.js");
+
 /**
  * @api {get} /recommended-lessons Get the recommended lessons for your active group
  * @apiName Recommended
@@ -63,7 +65,7 @@ router.post("/", jwtFilter, async (req, res) => {
  * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {String} lessonId The lesson id
- 
+
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {

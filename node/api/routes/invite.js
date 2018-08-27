@@ -26,12 +26,11 @@ const router = express.Router();
  *   "email": "john_smith@gmail.com",
  *   "groupId": 2
  * }
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
-     "succes": true,
-     "previewUrl": "https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc"
+     "succes": true
  *  }
  */
 router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
@@ -40,41 +39,39 @@ router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
   const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",
     [ codeValue, groupId, 1, email ]);
 
-  // Using Ethereal mail (just for testing)
-  nodemailer.createTestAccount((err, account) => {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
-      auth: {
-        user: account.user,
-        pass: account.pass
-      }
-    });
-    const mailOptions = {
-      from: '"Cerc informatică " <invite@cercinfo.ro>',
-      to: email,
-      subject: 'Invitaţie',
-      text: `
-          Salut!\nCodul tău este ${codeValue}.\nFoloseşte-l pentru a îţi crea un cont de profesor pe platformă.
-      `,
-      html: `
-          Salut! <br/>
-          Codul tău este: <b>${codeValue}</b>. <br/>
-          Foloseşte-l pentru a îţi crea un cont de profesor pe platformă.
-      `
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return res.json({
-          succes: false,
-          error
-        });
-      }
-      res.json({
-        succes: true,
-        previewUrl: nodemailer.getTestMessageUrl(info) 
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_SMTP_SERVER,
+    port: process.env.EMAIL_SMTP_PORT,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+
+  const mailOptions = {
+    from: '"Cerc informatică " <invite@cercinfo.ro>',
+    to: email,
+    subject: 'Invitaţie',
+    text: `
+        Salut!\nCodul tău este ${codeValue}.\nFoloseşte-l pentru a îţi crea un cont de profesor pe platformă.
+    `,
+    html: `
+        Salut! <br/>
+        Codul tău este: <b>${codeValue}</b>. <br/>
+        Foloseşte-l pentru a îţi crea un cont de profesor pe platformă.
+    `
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.json({
+        succes: false,
+        error
       });
+    }
+    res.json({
+      succes: true,
+      previewUrl: nodemailer.getTestMessageUrl(info)
     });
   });
 });
@@ -92,7 +89,7 @@ router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
  *   "email": "john_smith@gmail.com",
  *   "groupId": 2
  * }
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
@@ -106,23 +103,23 @@ router.post("/student", jwtFilter, adminFilter, async (req, res) => {
   const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",
     [ codeValue, groupId, 0, email ]);
 
-  // Using Ethereal mail (just for testing)
-  nodemailer.createTestAccount((err, account) => {
+
     const transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
+      host: process.env.EMAIL_SMTP_SERVER,
+      port: process.env.EMAIL_SMTP_PORT,
       secure: false,
       auth: {
-        user: account.user,
-        pass: account.pass
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
+
     const mailOptions = {
       from: '"Cerc informatică " <invite@cercinfo.ro>',
       to: email,
       subject: 'Invitaţie',
       text: `
-          Salut!\nCodul tău este ${codeValue}.\nFoloseşte-l pentru a îţi crea un cont de elev pe platformă.
+          Salut!\nCodul tău este ${codeValue}.\nFoloseşte-l pentru a îţi crea un cont de profesor pe platformă.
       `,
       html: `
           Salut! <br/>
@@ -139,10 +136,9 @@ router.post("/student", jwtFilter, adminFilter, async (req, res) => {
       }
       res.json({
         succes: true,
-        previewUrl: nodemailer.getTestMessageUrl(info) 
+        previewUrl: nodemailer.getTestMessageUrl(info)
       });
     });
-  });
 });
 
 /**
@@ -151,7 +147,7 @@ router.post("/student", jwtFilter, adminFilter, async (req, res) => {
  * @apiGroup Invitations
  *
  * @apiParam {String} inviteCode The invitation code
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {
