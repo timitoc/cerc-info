@@ -379,7 +379,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/groups/:groupId/lessons",
+    "url": "/lessons",
     "title": "Add a new lesson",
     "name": "AddLesson",
     "group": "Lessons",
@@ -414,18 +414,18 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"groupId\": 2,\n   \"name\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"name\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "api/routes/groups.js",
+    "filename": "api/routes/lessons.js",
     "groupTitle": "Lessons"
   },
   {
     "type": "delete",
-    "url": "/groups/:groupId/lessons/:lessonId",
+    "url": "/lessons/:lessonId",
     "title": "Delete a lesson",
     "name": "DeleteLesson",
     "group": "Lessons",
@@ -477,12 +477,12 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "api/routes/groups.js",
+    "filename": "api/routes/lessons.js",
     "groupTitle": "Lessons"
   },
   {
     "type": "get",
-    "url": "/groups/:groupId/lessons/:lessonId",
+    "url": "/lessons/:lessonId",
     "title": "Get lesson by id",
     "name": "GetLessonById",
     "group": "Lessons",
@@ -511,13 +511,6 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "groupId",
-            "description": "<p>The group id (useless, kept only for symmetrical purposes)</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
             "field": "lessonId",
             "description": "<p>The lesson id</p>"
           }
@@ -528,19 +521,19 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"groupId\": 2,\n  \"name\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"name\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "api/routes/groups.js",
+    "filename": "api/routes/lessons.js",
     "groupTitle": "Lessons"
   },
   {
     "type": "get",
-    "url": "/groups/:groupId/lessons",
-    "title": "Get all lessons from a group",
+    "url": "/lessons",
+    "title": "Get all lessons",
     "name": "GetLessons",
     "group": "Lessons",
     "permission": [
@@ -565,18 +558,18 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"groupId\": 2,\n       \"name\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"groupId\": 2,\n       \"name\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
+          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"name\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"name\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "api/routes/groups.js",
+    "filename": "api/routes/lessons.js",
     "groupTitle": "Lessons"
   },
   {
     "type": "put",
-    "url": "/groups/:groupId/lessons/:lessonId",
+    "url": "/lessons/:lessonId",
     "title": "Modify a lesson",
     "name": "ModifyLesson",
     "group": "Lessons",
@@ -629,13 +622,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"groupId\": 2,\n   \"name\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"name\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "api/routes/groups.js",
+    "filename": "api/routes/lessons.js",
     "groupTitle": "Lessons"
   },
   {
@@ -703,7 +696,48 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privileg: 1,\n  groupId: 1,\n  userId: 3\n}",
+          "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privilege: 1,\n  activeGroupId: 1,\n  userId: 3\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/me.js",
+    "groupTitle": "Me"
+  },
+  {
+    "type": "post",
+    "url": "/me/active-group",
+    "title": "Change user's active group",
+    "name": "Me",
+    "group": "Me",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"groupId\": 7\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
           "type": "json"
         }
       ]
