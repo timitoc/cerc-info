@@ -25,11 +25,11 @@ const teacherFilter = privilegeFilter(1);
  *     {
  *        groupId: 3,
  *        name: "Clasa a X-a",
- *        description: "Grup de pregătire pentru olimpiada de informatică" 
+ *        description: "Grup de pregătire pentru olimpiada de informatică"
  *     }, {
  *        groupId: 4,
  *        name: "Clasa a XII-a",
- *        description: "Grup de pregătire pentru olimpiada de informatică" 
+ *        description: "Grup de pregătire pentru olimpiada de informatică"
  *     }
  *   ]
  */
@@ -48,23 +48,28 @@ router.get("/", jwtFilter, teacherFilter, async (req, res) => {
  * @apiParamExample {json} Request example:
  * {
  *   "name": "Numele grupului",
- *   "description": "Descrierea grupului"
+ *   "description": "Descrierea grupului",
+ *   "startDate": "YYYY-MM-DD",
+ *   "endDate": "YYYY-MM-DD"
  * }
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    groupId: 3,
- *    name: "Grupul nou creat",
- *    description: "Descrierea grupului nou creat" 
+ *    success: true
  * }
  */
 router.post("/", jwtFilter, adminFilter, async (req, res) => {
-  const { name, description } = req.body;
-  const { insertId } = await query("INSERT INTO groups (name, description) VALUES (?, ?)", [ name, description ]);
+  const { name, description, startDate, endDate } = req.body;
+
+  const { insertId } = await query(`
+    INSERT INTO groups (name, description, start_date, end_date)
+    VALUES (?, ?, ?, ?)
+  `, [ name, description, startDate, endDate ]);
+
   res
     .status(201)
-    .json(R.head(await query("SELECT * FROM groups WHERE groupId = ?", insertId)));
+    .json({ succes: true });
 });
 
 /**
@@ -76,18 +81,47 @@ router.post("/", jwtFilter, adminFilter, async (req, res) => {
  * @apiHeader {String} Authorization Bearer [jwt]
  *
  * @apiParam {String} groupId The group id
- * 
+ *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {
- *    groupId: 3,
- *    name: "Un group",
- *    description: "Descrierea grupului" 
+ *    groupData: {
+ *      groupId: ...,
+ *      startDate: ....,
+ *      endDate: ....,
+ *      name: ...,
+ *      description: ...
+ *    },
+ *    users: ["A", "B" ]
  * }
  */
 router.get("/:groupId", jwtFilter, async (req, res) => {
   const { groupId } = req.params;
-  res.json(R.head(await query("SELECT * FROM groups WHERE groupId = ?", groupId)));
+
+  const groupObject = R.head(await query(`
+    SELECT
+      group_id AS groupId,
+      start_date AS startDate,
+      end_date AS endDate,
+      name,
+      description
+    FROM groups
+    WHERE group_id = ? AND deleted = 0
+  `, groupId))
+
+  const userList = await query(`
+    SELECT name
+    FROM users
+    JOIN user_group ON users.user_id = user_group.user_id
+    WHERE privilege = 0 AND user_group.group_id = ?
+  `, groupId);
+
+  const userNames = userList.map(item => item.name);
+
+  res.json({
+    groupData: groupObject,
+    users: userNames
+  });
 });
 
 /**
@@ -111,7 +145,7 @@ router.get("/:groupId", jwtFilter, async (req, res) => {
  * {
  *    groupId: 3,
  *    name: "Noul nume",
- *    description: "Noua descriere" 
+ *    description: "Noua descriere"
  * }
  */
 router.put("/:groupId", jwtFilter, adminFilter, async (req, res) => {
@@ -125,7 +159,7 @@ router.put("/:groupId", jwtFilter, adminFilter, async (req, res) => {
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  const keyEnumeration = values.map(item => `${item.key}=?`).join(', '); 
+  const keyEnumeration = values.map(item => `${item.key}=?`).join(', ');
   const valueEnumeration = values.map(item => item.value);
 
   await query(`UPDATE groups SET ${keyEnumeration} WHERE groupId = ?`, R.append(groupId, valueEnumeration));
@@ -155,7 +189,7 @@ router.delete("/:groupId", jwtFilter, adminFilter, async (req, res) => {
 
   await query("UPDATE groups SET deleted = 1 WHERE group_id = ?", groupId);
   res.status(201).json({
-    success: true 
+    success: true
   });
 });
 

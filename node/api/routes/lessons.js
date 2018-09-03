@@ -37,7 +37,8 @@ const jwtFilter = require("../filters/jwt-filter.js");
  *    }
  * ]
  */
-router.get("/", async (req, res) => {
+router.get("/", jwtFilter, async (req, res) => {
+  const { userId } = req.decodedToken;
   res.json(await query("SELECT * FROM lessons"));
 });
 

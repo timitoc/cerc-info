@@ -27,7 +27,7 @@
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n  \"name\": \"Numele grupului\",\n  \"description\": \"Descrierea grupului\"\n}",
+          "content": "{\n  \"name\": \"Numele grupului\",\n  \"description\": \"Descrierea grupului\",\n  \"startDate\": \"YYYY-MM-DD\",\n  \"endDate\": \"YYYY-MM-DD\"\n}",
           "type": "json"
         }
       ]
@@ -36,7 +36,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   groupId: 3,\n   name: \"Grupul nou creat\",\n   description: \"Descrierea grupului nou creat\" \n}",
+          "content": "HTTP 201 OK\n{\n   success: true\n}",
           "type": "json"
         }
       ]
@@ -136,7 +136,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n   groupId: 3,\n   name: \"Un group\",\n   description: \"Descrierea grupului\" \n}",
+          "content": "HTTP 200 OK\n{\n   groupData: {\n     groupId: ...,\n     startDate: ....,\n     endDate: ....,\n     name: ...,\n     description: ...\n   },\n   users: [\"A\", \"B\" ]\n}",
           "type": "json"
         }
       ]
@@ -173,7 +173,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n  [\n    {\n       groupId: 3,\n       name: \"Clasa a X-a\",\n       description: \"Grup de pregătire pentru olimpiada de informatică\" \n    }, {\n       groupId: 4,\n       name: \"Clasa a XII-a\",\n       description: \"Grup de pregătire pentru olimpiada de informatică\" \n    }\n  ]",
+          "content": "HTTP 200 OK\n  [\n    {\n       groupId: 3,\n       name: \"Clasa a X-a\",\n       description: \"Grup de pregătire pentru olimpiada de informatică\"\n    }, {\n       groupId: 4,\n       name: \"Clasa a XII-a\",\n       description: \"Grup de pregătire pentru olimpiada de informatică\"\n    }\n  ]",
           "type": "json"
         }
       ]
@@ -230,7 +230,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   groupId: 3,\n   name: \"Noul nume\",\n   description: \"Noua descriere\" \n}",
+          "content": "HTTP 201 OK\n{\n   groupId: 3,\n   name: \"Noul nume\",\n   description: \"Noua descriere\"\n}",
           "type": "json"
         }
       ]
@@ -317,12 +317,12 @@
       "examples": [
         {
           "title": "Error: Code not found",
-          "content": "HTTP 200\n{\n   error: \"Code not found!\"\n}",
+          "content": "HTTP 200\n{\n   error: \"Cod inexistent!\"\n}",
           "type": "json"
         },
         {
           "title": "Error: Code already used",
-          "content": "HTTP 200\n{\n   error: \"Code already used!\"\n}",
+          "content": "HTTP 200\n{\n   error: \"Codul a fost deja folosit!\"\n}",
           "type": "json"
         }
       ]
