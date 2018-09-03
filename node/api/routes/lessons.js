@@ -132,7 +132,7 @@ router.post("/", async (req, res) => {
  *    "dateAdded": "2018-07-31T21:00:00.000Z"
  *  }
  */
-router.put("/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
+router.put("/:lessonId", jwtFilter, async (req, res) => {
   const { groupId, lessonId } = req.params;
 
   const values = Array
@@ -169,7 +169,7 @@ router.put("/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:groupId/lessons/:lessonId", jwtFilter, teacherFilter, async (req, res) => {
+router.delete("/:groupId/lessons/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
 
   await query("UPDATE lessons SET deleted = 1 WHERE lessonId = ?", lessonId);
