@@ -119,8 +119,6 @@ CREATE TABLE `invitation_codes` (
 	PRIMARY KEY (`code_id`)
 );
 
-ALTER TABLE `users` ADD CONSTRAINT `users_fk0` FOREIGN KEY (`active_group`) REFERENCES `user_group`(`user_group_id`);
-
 ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
 
 ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
@@ -158,18 +156,3 @@ ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk0` FOREIGN KEY (`submit_
 ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk1` FOREIGN KEY (`task_id`) REFERENCES `tasks`(`task_id`);
 
 ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
-
-# Add the teacher to all groups
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (2, 1, 1);
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (2, 2, 1);
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (2, 3, 1);
-
-# Add students
-
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (3, 1, 0);
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (4, 1, 0);
-
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (5, 2, 0);
-
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (6, 2, 0);
-INSERT INTO group_user (user_id, group_id, privilege) VALUES (7, 2, 0);

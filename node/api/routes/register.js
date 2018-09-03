@@ -21,7 +21,7 @@ const router = express.Router();
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    userId: 3,
+ *    user_id: 3,
  *    name: "John Smith",
  *    email: "john_smith@gmail.com",
  *    privilege: 1
@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
 
   res
     .status(201)
-    .json(R.head(await query("SELECT userId, email, name, privilege FROM users WHERE userId = ?", insertId)));
+    .json(R.head(await query("SELECT user_id as userId, email, name, privilege FROM users WHERE user_id = ?", insertId)));
 });
 
 module.exports = router;

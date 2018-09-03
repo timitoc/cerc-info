@@ -241,55 +241,8 @@
   },
   {
     "type": "post",
-    "url": "/invite/student",
-    "title": "Generate invitation for a student",
-    "name": "InviteStudent",
-    "group": "Invitations",
-    "permission": [
-      {
-        "name": "administrator"
-      }
-    ],
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "Authorization",
-            "description": "<p>Bearer [jwt]</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "examples": [
-        {
-          "title": "Request example:",
-          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"groupId\": 2\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n     \"succes\": true,\n     \"previewUrl\": \"https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc\"\n }",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "api/routes/invite.js",
-    "groupTitle": "Invitations"
-  },
-  {
-    "type": "post",
-    "url": "/invite/teacher",
+    "url": "/invite",
     "title": "Generate invitation for a teacher",
-    "name": "InviteTeacher",
     "group": "Invitations",
     "permission": [
       {
@@ -313,7 +266,7 @@
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"groupId\": 2\n}",
+          "content": "{\n  \"email\": \"john_smith@gmail.com\",\n  \"groupId\": 2,\n  \"type\": \"teacher\"\n}",
           "type": "json"
         }
       ]
@@ -322,14 +275,15 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n     \"succes\": true,\n     \"previewUrl\": \"https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc\"\n }",
+          "content": "HTTP 201 OK\n{\n     \"succes\": true\n }",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
     "filename": "api/routes/invite.js",
-    "groupTitle": "Invitations"
+    "groupTitle": "Invitations",
+    "name": "PostInvite"
   },
   {
     "type": "get",
@@ -874,7 +828,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   userId: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
+          "content": "HTTP 201 OK\n{\n   user_id: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
           "type": "json"
         }
       ]
@@ -920,7 +874,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   userId: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
+          "content": "HTTP 201 OK\n{\n   user_id: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
           "type": "json"
         }
       ]
@@ -957,7 +911,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n  [\n    {\n       userId: 1,\n       name: \"Johnny Smith\",\n       email: \"johnny_smith@gmail.com\",\n       privilege: 0\n    },\n    {\n       userId: 2,\n       name: \"John Smith\",\n       email: \"john_smith@gmail.com\",\n       privilege: 1\n    }\n  ]",
+          "content": "HTTP 200 OK\n  [\n    {\n       user_id: 1,\n       name: \"Johnny Smith\",\n       email: \"johnny_smith@gmail.com\",\n       privilege: 0\n    },\n    {\n       user_id: 2,\n       name: \"John Smith\",\n       email: \"john_smith@gmail.com\",\n       privilege: 1\n    }\n  ]",
           "type": "json"
         }
       ]
@@ -968,7 +922,7 @@
   },
   {
     "type": "get",
-    "url": "/users/:userId",
+    "url": "/users/:user_id",
     "title": "Get user by id",
     "name": "GetUsersById",
     "group": "Users",
@@ -979,7 +933,7 @@
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "userId",
+            "field": "user_id",
             "description": "<p>The user id</p>"
           }
         ]
@@ -1007,7 +961,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n   userId: 2,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
+          "content": "HTTP 200 OK\n{\n   user_id: 2,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
           "type": "json"
         }
       ]
@@ -1018,7 +972,7 @@
   },
   {
     "type": "put",
-    "url": "/users/:userId",
+    "url": "/users/:user_id",
     "title": "Modify a user",
     "name": "ModifyUser",
     "group": "Users",
@@ -1047,7 +1001,7 @@
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
-            "field": "userId",
+            "field": "user_id",
             "description": "<p>The user id</p>"
           }
         ]
@@ -1064,7 +1018,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   userId: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
+          "content": "HTTP 201 OK\n{\n   user_id: 3,\n   name: \"John Smith\",\n   email: \"john_smith@gmail.com\",\n   privilege: 1\n}",
           "type": "json"
         }
       ]
@@ -1075,7 +1029,7 @@
   },
   {
     "type": "delete",
-    "url": "/users/:userId",
+    "url": "/users/:user_id",
     "title": "Delete a user",
     "name": "UserGroup",
     "group": "Users",
@@ -1104,7 +1058,7 @@
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
-            "field": "userId",
+            "field": "user_id",
             "description": "<p>The user id</p>"
           }
         ]

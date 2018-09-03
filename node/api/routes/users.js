@@ -21,13 +21,13 @@ const adminFilter = privilegeFilter(2);
  * HTTP 200 OK
  *   [
  *     {
- *        userId: 1,
+ *        user_id: 1,
  *        name: "Johnny Smith",
  *        email: "johnny_smith@gmail.com",
  *        privilege: 0
  *     },
  *     {
- *        userId: 2,
+ *        user_id: 2,
  *        name: "John Smith",
  *        email: "john_smith@gmail.com",
  *        privilege: 1
@@ -35,15 +35,15 @@ const adminFilter = privilegeFilter(2);
  *   ]
  */
 router.get("/", jwtFilter, adminFilter, async (req, res) => {
-  res.json(await query("SELECT userId, email, name, privilege FROM users"));
+  res.json(await query("SELECT user_id, email, name, privilege FROM users"));
 });
 
 /**
- * @api {get} /users/:userId Get user by id
+ * @api {get} /users/:user_id Get user by id
  * @apiName GetUsersById
  * @apiGroup Users
  *
- * @apiParam {String} userId The user id
+ * @apiParam {String} user_id The user id
  *
  * @apiPermission administrator
  * @apiHeader {String} Authorization Bearer [jwt]
@@ -51,15 +51,15 @@ router.get("/", jwtFilter, adminFilter, async (req, res) => {
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {
- *    userId: 2,
+ *    user_id: 2,
  *    name: "John Smith",
  *    email: "john_smith@gmail.com",
  *    privilege: 1
  * }
  */
-router.get("/:userId", jwtFilter, adminFilter, async (req, res) => {
-  const { userId } = req.params;
-  res.json(R.head(await query("SELECT userId, email, name, privilege FROM users WHERE userId = ?", userId)));
+router.get("/:user_id", jwtFilter, adminFilter, async (req, res) => {
+  const { user_id } = req.params;
+  res.json(R.head(await query("SELECT user_id, email, name, privilege FROM users WHERE user_id = ?", user_id)));
 });
 
 /**
@@ -81,7 +81,7 @@ router.get("/:userId", jwtFilter, adminFilter, async (req, res) => {
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    userId: 3,
+ *    user_id: 3,
  *    name: "John Smith",
  *    email: "john_smith@gmail.com",
  *    privilege: 1
@@ -96,18 +96,18 @@ router.post("/", jwtFilter, adminFilter, async (req, res) => {
 
   res
     .status(201)
-    .json(R.head(await query("SELECT userId, email, name, privilege FROM users WHERE userId = ?", insertId)));
+    .json(R.head(await query("SELECT user_id, email, name, privilege FROM users WHERE user_id = ?", insertId)));
 });
 
 /**
- * @api {put} /users/:userId Modify a user
+ * @api {put} /users/:user_id Modify a user
  * @apiName ModifyUser
  * @apiGroup Users
  *
  * @apiPermission administrator
  * @apiHeader {String} Authorization Bearer [jwt]
  *
- * @apiParam {Integer} userId The user id
+ * @apiParam {Integer} user_id The user id
  *
  * @apiParamExample {json} Request example (only use the fields that you want to update):
  * {
@@ -120,14 +120,14 @@ router.post("/", jwtFilter, adminFilter, async (req, res) => {
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    userId: 3,
+ *    user_id: 3,
  *    name: "John Smith",
  *    email: "john_smith@gmail.com",
  *    privilege: 1
  * }
  */
-router.put("/:userId", jwtFilter, adminFilter, async (req, res) => {
-  const { userId } = req.params;
+router.put("/:user_id", jwtFilter, adminFilter, async (req, res) => {
+  const { user_id } = req.params;
 
   const values = Array
     .of("name", "email", "password", "privilege")
@@ -145,21 +145,21 @@ router.put("/:userId", jwtFilter, adminFilter, async (req, res) => {
   const keyEnumeration = values.map(item => `${item.key}=?`).join(', '); 
   const valueEnumeration = values.map(item => item.value);
 
-  await query(`UPDATE users SET ${keyEnumeration} WHERE userId = ?`, R.append(userId, valueEnumeration));
+  await query(`UPDATE users SET ${keyEnumeration} WHERE user_id = ?`, R.append(user_id, valueEnumeration));
   res
     .status(201)
-    .json(R.head(await query("SELECT userId, email, name, privilege FROM users WHERE userId = ?", userId)));
+    .json(R.head(await query("SELECT user_id, email, name, privilege FROM users WHERE user_id = ?", user_id)));
 });
 
 /**
- * @api {delete} /users/:userId Delete a user
+ * @api {delete} /users/:user_id Delete a user
  * @apiName UserGroup
  * @apiGroup Users
  *
  * @apiPermission administrator
  * @apiHeader {String} Authorization Bearer [jwt]
  *
- * @apiParam {Integer} userId The user id
+ * @apiParam {Integer} user_id The user id
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
@@ -167,10 +167,10 @@ router.put("/:userId", jwtFilter, adminFilter, async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:userId", jwtFilter, adminFilter, async (req, res) => {
-  const { userId } = req.params;
+router.delete("/:user_id", jwtFilter, adminFilter, async (req, res) => {
+  const { user_id } = req.params;
 
-  await query("DELETE FROM users WHERE userId = ?", userId);
+  await query("DELETE FROM users WHERE user_id = ?", user_id);
   res.status(201).json({
     success: true 
   });

@@ -34,7 +34,7 @@ const teacherFilter = privilegeFilter(1);
  *   ]
  */
 router.get("/", jwtFilter, teacherFilter, async (req, res) => {
-  res.json(await query("SELECT * FROM groups"));
+  res.json(await query("SELECT name, description, group_id as groupId FROM groups"));
 });
 
 /**
