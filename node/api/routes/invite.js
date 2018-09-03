@@ -36,7 +36,7 @@ const router = express.Router();
 router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId } = req.body;
   const codeValue = randomstring.generate(5).toUpperCase();
-  const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",
+  const { insertId } = await query("INSERT INTO invitation_codes (code, group_id, privilege, email) VALUES (?, ?, ?, ?)",
     [ codeValue, groupId, 1, email ]);
 
   const transporter = nodemailer.createTransport({
@@ -93,14 +93,13 @@ router.post("/teacher", jwtFilter, adminFilter, async (req, res) => {
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
-     "succes": true,
-     "previewUrl": "https://ethereal.email/message/W2FI7F.N1gyNXi9eW2FI7g9ALQzbRAJiAAAAAb76SgwS8fklYkNkjbQEUPc"
+     "succes": true
  *  }
  */
 router.post("/student", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId } = req.body;
   const codeValue = randomstring.generate(5).toUpperCase();
-  const { insertId } = await query("INSERT INTO invitation_codes (code, groupId, privilege, email) VALUES (?, ?, ?, ?)",
+  const { insertId } = await query("INSERT INTO invitation_codes (code, group_id, privilege, email) VALUES (?, ?, ?, ?)",
     [ codeValue, groupId, 0, email ]);
 
 

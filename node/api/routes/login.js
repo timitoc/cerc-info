@@ -39,7 +39,7 @@ const router = express.Router();
  */
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
-  const user = R.head(await query("SELECT userId, name, privilege, password FROM users WHERE email = ?", email));
+  const user = R.head(await query("SELECT user_id, name, privilege, password FROM users WHERE email = ?", email));
   if (R.isNil(user)) 
     return res.json({
       error: "User account not found!"
