@@ -50,7 +50,7 @@ router.post("/", async (req, res) => {
       email,
       name: user.name,
       privilege: user.privilege,
-      userId: user.userId
+      userId: user.user_id
     };
     const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
     return res.json({ token });

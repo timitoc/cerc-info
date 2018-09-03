@@ -4,7 +4,7 @@ CREATE TABLE `users` (
 	`email` varchar(50) NOT NULL,
 	`password` varchar(200) NOT NULL,
 	`name` varchar(20) NOT NULL,
-	`active_group` INT,
+	`active_group` INT NULL,
 	PRIMARY KEY (`user_id`)
 );
 
@@ -20,8 +20,15 @@ CREATE TABLE `groups` (
 	`start_date` DATE NOT NULL,
 	`end_date` DATE NOT NULL,
 	`deleted` BINARY NOT NULL DEFAULT '0',
+	`name` varchar(50) NOT NULL,
+	`description` varchar(500) NOT NULL,
 	PRIMARY KEY (`group_id`)
 );
+
+INSERT INTO groups (name, description, start_date, end_date) VALUES
+  ("Clasa IX", "Grup de pregatire clasa a IX-a", "2018-01-01", "2019-01-01"),
+  ("Clasa X", "Grup de pregatire clasa a X-a", "2018-01-01", "2019-01-01"),
+  ("Clasele XI-XII", "Grup de pregatire clasele a XI-a si a XII-a", "2018-01-01", "2019-01-01");
 
 CREATE TABLE `user_group` (
 	`user_group_id` INT NOT NULL AUTO_INCREMENT,
@@ -29,6 +36,15 @@ CREATE TABLE `user_group` (
 	`group_id` INT NOT NULL,
 	PRIMARY KEY (`user_group_id`)
 );
+
+INSERT INTO users (email, password, privilege, name, active_group) VALUES
+  ("admin@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 2, "Administrator", NULL),
+  ("teacher@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 1, "Teacher", 1),
+  ("student@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1),
+  ("student9@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1),
+  ("student10@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1),
+  ("student11@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1),
+  ("student12@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1);
 
 CREATE TABLE `lesson_comments` (
 	`comment_id` INT NOT NULL AUTO_INCREMENT,
@@ -142,20 +158,6 @@ ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk0` FOREIGN KEY (`submit_
 ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk1` FOREIGN KEY (`task_id`) REFERENCES `tasks`(`task_id`);
 
 ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
-
-
-INSERT INTO users (email, password, privilege, name) VALUES ("admin@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 2, "Administrator"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("teacher@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 1, "Teacher"); # password = "parola"
-
-INSERT INTO users (email, password, privilege, name) VALUES ("student@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student9@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student10@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student11@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-INSERT INTO users (email, password, privilege, name) VALUES ("student12@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student"); # password = "parola"
-
-INSERT INTO groups (name, description) VALUES ("Clasa IX", "Grup de pregatire clasa a IX-a");
-INSERT INTO groups (name, description) VALUES ("Clasa X", "Grup de pregatire clasa a IX-a");
-INSERT INTO groups (name, description) VALUES ("Clasele XI-XII", "Grup de pregatire clasele a XI-a si a XII-a");
 
 # Add the teacher to all groups
 INSERT INTO group_user (user_id, group_id, privilege) VALUES (2, 1, 1);

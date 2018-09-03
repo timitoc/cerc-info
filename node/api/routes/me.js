@@ -29,7 +29,9 @@ const router = express.Router();
  */
 
 router.get("/", jwtFilter, async (req, res) => {
+  console.log("req.decodedToken", req.decodedToken);
   const { userId } = req.decodedToken;
+  console.log("userId", userId);
   /*const groups = await query("SELECT group_id FROM group_user WHERE user_id = ? AND active = 1 LIMIT 1", userId);
   const group = groups.length && groups[0];
   if (group) {
