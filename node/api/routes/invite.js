@@ -35,9 +35,10 @@ const router = express.Router();
  */
 router.post("/", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId, type } = req.body;
+  console.log(type);
   const codeValue = randomstring.generate(5).toUpperCase();
   const { insertId } = await query("INSERT INTO invitation_codes (code, group_id, privilege, email) VALUES (?, ?, ?, ?)",
-    [ codeValue, groupId, 1, email ]);
+    [ codeValue, groupId, type == "teacher" ? 1 : 2, email ]);
 
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SMTP_SERVER,
@@ -95,12 +96,12 @@ router.post("/", jwtFilter, adminFilter, async (req, res) => {
  * @apiErrorExample {json} Error: Code not found
  * HTTP 200
  * {
- *    error: "Code not found!"
+ *    error: "Cod inexistent!"
  * }
  * @apiErrorExample {json} Error: Code already used
  * HTTP 200
  * {
- *    error: "Code already used!"
+ *    error: "Codul a fost deja folosit!"
  * }
  */
 router.get("/validate/:inviteCode", async (req, res) => {
@@ -108,11 +109,11 @@ router.get("/validate/:inviteCode", async (req, res) => {
   const code = R.head(await query("SELECT * FROM invitation_codes WHERE code = ?", inviteCode));
   if (R.isNil(code))
     return res.json({
-      error: "Code not found!"
+      error: "Cod inexistent!"
     });
   if (code.used)
     return res.json({
-      error: "Code already used!"
+      error: "Codul a fost deja folosit!"
     });
   res.json({
     valid: true,
