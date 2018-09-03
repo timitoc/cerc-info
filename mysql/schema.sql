@@ -93,6 +93,16 @@ CREATE TABLE `submit_task` (
 	`content` TEXT NOT NULL
 );
 
+CREATE TABLE `invitation_codes` (
+	`code_id` INT NOT NULL AUTO_INCREMENT,
+	`code` varchar(200) NOT NULL,
+	`group_id` INT NOT NULL,
+	`privilege` INT NOT NULL,
+	`email` varchar(50) NOT NULL,
+	`used` BOOLEAN NOT NULL DEFAULT '0',
+	PRIMARY KEY (`code_id`)
+);
+
 ALTER TABLE `users` ADD CONSTRAINT `users_fk0` FOREIGN KEY (`active_group`) REFERENCES `user_group`(`user_group_id`);
 
 ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
@@ -131,6 +141,7 @@ ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk0` FOREIGN KEY (`submit_
 
 ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk1` FOREIGN KEY (`task_id`) REFERENCES `tasks`(`task_id`);
 
+ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
 
 INSERT INTO users (email, password, privilege, name) VALUES ("admin@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 2, "Administrator"); # password = "parola"
