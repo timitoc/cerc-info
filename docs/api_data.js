@@ -1,6 +1,47 @@
 define({ "api": [
   {
     "type": "post",
+    "url": "/me/active-group",
+    "title": "Change user's active group",
+    "name": "SetActiveGroup",
+    "group": "ActiveGroup",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"groupId\": 7\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/me.js",
+    "groupTitle": "ActiveGroup"
+  },
+  {
+    "type": "post",
     "url": "/groups",
     "title": "Add a new group",
     "name": "AddGroup",
@@ -651,47 +692,6 @@ define({ "api": [
         {
           "title": "Success response:",
           "content": "HTTP 200 OK\n{\n  email: \"john_smith@gmail.com\",\n  name: \"John Smith\",\n  privilege: 1,\n  activeGroupId: 1,\n  userId: 3\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "api/routes/me.js",
-    "groupTitle": "Me"
-  },
-  {
-    "type": "post",
-    "url": "/me/active-group",
-    "title": "Change user's active group",
-    "name": "Me",
-    "group": "Me",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "Authorization",
-            "description": "<p>Bearer [jwt]</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "examples": [
-        {
-          "title": "Request example:",
-          "content": "{\n  \"groupId\": 7\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  success: true\n}",
           "type": "json"
         }
       ]
