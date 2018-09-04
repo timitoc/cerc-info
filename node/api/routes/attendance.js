@@ -67,4 +67,6 @@ router.get("/:groupId/:date", async (req, res) => {
   res.json(attendanceList);
 });
 
+//TODO: remove user
+
 module.exports = router;

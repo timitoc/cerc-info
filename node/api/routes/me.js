@@ -50,8 +50,8 @@ router.get("/", jwtFilter, async (req, res) => {
 
 /**
  * @api {post} /me/active-group Change user's active group
- * @apiName Me
- * @apiGroup Me
+ * @apiName SetActiveGroup
+ * @apiGroup ActiveGroup
  *
  * @apiHeader {String} Authorization Bearer [jwt]
  *
