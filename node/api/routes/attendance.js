@@ -7,6 +7,19 @@ const { query } = global;
 
 const router = express.Router();
 
+/**
+ * @api {post} /attendance/:groupId/:date/:userId Add user to attendance
+ * @apiName AddUser
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
 router.post("/:groupId/:date/:userId", async (req, res) => {
   const { groupId, date, userId } = req.params;
 
@@ -51,7 +64,19 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
    }
 });
 
-// get users
+/**
+ * @api {get} /attendance/:groupId/:date Get users from attendance
+ * @apiName GetUsers
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
 router.get("/:groupId/:date", async (req, res) => {
   const { groupId } = req.params;
 
@@ -67,6 +92,42 @@ router.get("/:groupId/:date", async (req, res) => {
   res.json(attendanceList);
 });
 
-//TODO: remove user
+/**
+ * @api {delete} /attendance/:groupId/:date/:userId Remove user from attendance
+ * @apiName RemoveUser
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
+router.delete("/:groupId/:date/:userId", async (req, res) => {
+  const { groupId, date, userId } = req.params;
+
+  const attendanceObject = R.head(await query(`
+    SELECT
+      attendance_id AS attendanceId,
+      date,
+      group_id AS groupId
+    FROM attendance
+    WHERE date = ? AND group_id = ?
+  `, [ date, groupId ]));
+
+  if (R.isNil(attendanceObject)) {
+    return res.json({
+      error: "Attendance does not exist!"
+    })
+  }
+
+  const { attendanceId } = attendanceObject;
+
+  await query("DELETE FROM attendance_users WHERE attendance_id = ? AND user_id = ?", [ attendanceId, userId ] );
+
+  res.json({ success: true });
+});
 
 module.exports = router;

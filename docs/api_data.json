@@ -42,6 +42,102 @@
   },
   {
     "type": "post",
+    "url": "/attendance/:groupId/:date/:userId",
+    "title": "Add user to attendance",
+    "name": "AddUser",
+    "group": "Attdendance",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/attendance.js",
+    "groupTitle": "Attdendance"
+  },
+  {
+    "type": "get",
+    "url": "/attendance/:groupId/:date",
+    "title": "Get users from attendance",
+    "name": "GetUsers",
+    "group": "Attdendance",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/attendance.js",
+    "groupTitle": "Attdendance"
+  },
+  {
+    "type": "delete",
+    "url": "/attendance/:groupId/:date/:userId",
+    "title": "Remove user from attendance",
+    "name": "RemoveUser",
+    "group": "Attdendance",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/attendance.js",
+    "groupTitle": "Attdendance"
+  },
+  {
+    "type": "post",
     "url": "/groups",
     "title": "Add a new group",
     "name": "AddGroup",

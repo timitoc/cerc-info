@@ -110,16 +110,31 @@ router.post("/:groupId/:userId", jwtFilter, async (req, res) => {
  */
 
 router.get("/my", jwtFilter, async (req, res) => {
-  const { userId } = req.decodedToken;
-  const groups = await query(`
-    SELECT
-      group_id AS groupId,
-      name
-    FROM group_user
-    JOIN groups ON groups.group_id = group_user.group_id
-    WHERE group_user.user_id = ?
-  `, userId);
-  res.json(groups);
+  const { userId, privilege } = req.decodedToken;
+
+  if (privilege == 0) {
+
+    const groups = await query(`
+      SELECT
+        group_id AS groupId,
+        name
+      FROM group_user
+      JOIN groups ON groups.group_id = group_user.group_id
+      WHERE group_user.user_id = ?
+    `, userId);
+    res.json(groups);
+
+  } else {
+    // A teacher can choose any group
+
+    const groups = await query(`
+      SELECT
+        group_id AS groupId,
+        name
+      FROM groups
+    `, userId);
+    res.json(groups);
+  }
 });
 
 /**
