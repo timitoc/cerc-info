@@ -63,7 +63,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "content": "HTTP 200 OK\n{\n  success: true,\n  attendanceId: 5\n}",
           "type": "json"
         }
       ]

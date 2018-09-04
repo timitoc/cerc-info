@@ -17,12 +17,14 @@ const router = express.Router();
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
  * {
- *   success: true
+ *   success: true,
+ *   attendanceId: 5
  * }
  */
 router.post("/:groupId/:date", async (req, res) => {
   const { groupId, date } = req.params;
-  await query("INSERT INTO attendance (date, group_id) VALUES (?, ?)", [ date, groupId ]);
+  const r = await query("INSERT INTO attendance (date, group_id) VALUES (?, ?)", [ date, groupId ]);
+  res.json({ success: true, attendanceId: r.insertId });
 });
 
 /**
@@ -127,7 +129,7 @@ router.get("/:groupId/:date", async (req, res) => {
  * }]
  */
 router.get("/:groupId", async (req, res) => {
-  const { groupId } = req.body;
+  const { groupId } = req.params;
   const attendanceList = await query("SELECT attendance_id AS attendanceId, date FROM attendance WHERE group_id = ?", groupId);
   res.json(attendanceList);
 });
