@@ -118,9 +118,9 @@ router.get("/my", jwtFilter, async (req, res) => {
       SELECT
         group_id AS groupId,
         name
-      FROM group_user
-      JOIN groups ON groups.group_id = group_user.group_id
-      WHERE group_user.user_id = ?
+      FROM user_group
+      JOIN groups ON groups.group_id = user_group.group_id
+      WHERE user_group.user_id = ?
     `, userId);
     res.json(groups);
 
