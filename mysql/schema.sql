@@ -47,8 +47,8 @@ INSERT INTO users (email, password, privilege, name, active_group) VALUES
   ("student12@cercinfo", "$2a$10$vge1apdqp6d9DxbllKm0VOnpmZJpDKgl4HGB/d7dItZoNCGY7DVsK", 0, "Student", 1);
 
 INSERT INTO user_group (user_id, group_id) VALUES
-	(3, 2),
-	(4, 2),
+	(3, 1),
+	(4, 1),
 	(5, 3),
 	(6, 1);
 

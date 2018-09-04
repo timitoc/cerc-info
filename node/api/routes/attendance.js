@@ -27,6 +27,35 @@ router.post("/:groupId/:date", async (req, res) => {
   res.json({ success: true, attendanceId: r.insertId });
 });
 
+router.get("/users/:attendanceId", async (req, res) => {
+  const { attendanceId } = req.params;
+
+  try{
+
+    const  { groupId } = R.head(await query("SELECT group_id AS groupId FROM attendance WHERE attendance_id = ?", attendanceId));
+
+    const users = await query(`
+      SELECT
+        users.user_id AS userId,
+        users.name,
+        (SELECT COUNT(1) != 0
+          FROM attendance_users
+          WHERE attendance_users.user_id = userId AND attendance_id = ?) AS isPresent
+      FROM users
+      JOIN user_group ON user_group.user_id = users.user_id
+      WHERE group_id = ?
+    `, [ attendanceId, groupId]);
+
+    res.json(users);
+
+  } catch(e) {
+    return res.json({
+      error: "Attendance not found!"
+    })
+  }
+
+});
+
 /**
  * @api {post} /attendance/:groupId/:date/:userId Add user to attendance
  * @apiName AddUser
@@ -82,35 +111,6 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
        error
      });
    }
-});
-
-/**
- * @api {get} /attendance/users/:attendanceId Get users from attendance
- * @apiName GetUsers
- * @apiGroup Attdendance
- *
- * @apiHeader {String} Authorization Bearer [jwt]
- *
- * @apiSuccessExample {json} Success response:
- * HTTP 200 OK
- * {
- *   success: true
- * }
- */
-router.get("/:attendanceId", async (req, res) => {
-  const { attendanceId } = req.params;
-
-  const attendanceList = await query(`
-  SELECT
-    attendance_users.user_id AS userId,
-    users.name
-  FROM attendance
-  JOIN attendance_users ON attendance_users.user_id = attendance.user_id
-  JOIN users ON users.user_id = attendance_users.user_id
-  WHERE attendance_id = ?
-  `, attendanceId);
-
-  res.json(attendanceList);
 });
 
 /**
@@ -199,6 +199,8 @@ router.get("/:attendanceId/:userId/toggle", async (req, res) => {
     // delete it
     await query("DELETE FROM attendance_users WHERE attendance_id = ? AND user_id = ?", [ attendanceId, userId ] );
   }
+
+  res.json({ success: true });
 });
 
 module.exports = router;
