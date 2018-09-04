@@ -85,7 +85,7 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
 });
 
 /**
- * @api {get} /attendance/:groupId/:date Get users from attendance
+ * @api {get} /attendance/users/:attendanceId Get users from attendance
  * @apiName GetUsers
  * @apiGroup Attdendance
  *
@@ -97,17 +97,18 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
  *   success: true
  * }
  */
-router.get("/:groupId/:date", async (req, res) => {
-  const { groupId } = req.params;
+router.get("/:attendanceId", async (req, res) => {
+  const { attendanceId } = req.params;
 
   const attendanceList = await query(`
   SELECT
-    attendance_id AS attendanceId,
-    date,
-    group_id AS groupId
+    attendance_users.user_id AS userId,
+    users.name
   FROM attendance
-  WHERE group_id = ?
-  `, groupId);
+  JOIN attendance_users ON attendance_users.user_id = attendance.user_id
+  JOIN users ON users.user_id = attendance_users.user_id
+  WHERE attendance_id = ?
+  `, attendanceId);
 
   res.json(attendanceList);
 });
@@ -170,6 +171,34 @@ router.delete("/:groupId/:date/:userId", async (req, res) => {
   await query("DELETE FROM attendance_users WHERE attendance_id = ? AND user_id = ?", [ attendanceId, userId ] );
 
   res.json({ success: true });
+});
+
+
+/**
+ * @api {get} /attendance/:attendanceId/:userId/toggle Toggle attendance for user
+ * @apiName RemoveUser
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
+router.get("/:attendanceId/:userId/toggle", async (req, res) => {
+  const { attendanceId, userId } = req.params;
+  
+  const userAttendance = R.head(await query("SELECT * FROM attendance_users WHERE user_id = ? AND attendance_id = ?", [ userId, attendanceId ]));
+
+  if (R.isNil(userAttendance)) {
+    // insert it
+    await query("INSERT INTO attendance_users (attendance_id, user_id) VALUES (?, ?)", [ attendanceId, userId ]);
+  } else {
+    // delete it
+    await query("DELETE FROM attendance_users WHERE attendance_id = ? AND user_id = ?", [ attendanceId, userId ] );
+  }
 });
 
 module.exports = router;
