@@ -176,7 +176,7 @@ router.delete("/:groupId/:date/:userId", async (req, res) => {
 
 /**
  * @api {get} /attendance/:attendanceId/:userId/toggle Toggle attendance for user
- * @apiName RemoveUser
+ * @apiName ToggleAttendance
  * @apiGroup Attdendance
  *
  * @apiHeader {String} Authorization Bearer [jwt]
@@ -189,7 +189,7 @@ router.delete("/:groupId/:date/:userId", async (req, res) => {
  */
 router.get("/:attendanceId/:userId/toggle", async (req, res) => {
   const { attendanceId, userId } = req.params;
-  
+
   const userAttendance = R.head(await query("SELECT * FROM attendance_users WHERE user_id = ? AND attendance_id = ?", [ userId, attendanceId ]));
 
   if (R.isNil(userAttendance)) {

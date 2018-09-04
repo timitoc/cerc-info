@@ -204,7 +204,7 @@ define({ "api": [
     "type": "get",
     "url": "/attendance/:attendanceId/:userId/toggle",
     "title": "Toggle attendance for user",
-    "name": "RemoveUser",
+    "name": "ToggleAttendance",
     "group": "Attdendance",
     "header": {
       "fields": {
