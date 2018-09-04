@@ -87,6 +87,38 @@
     "groupTitle": "Groups"
   },
   {
+    "type": "post",
+    "url": "/groups/:groupId/:userId",
+    "title": "Add user to group",
+    "name": "AddUserToGroup",
+    "group": "Groups",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n{\n   success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Groups"
+  },
+  {
     "type": "delete",
     "url": "/groups/:groupId",
     "title": "Delete a group",
@@ -128,6 +160,38 @@
         {
           "title": "Success response:",
           "content": "HTTP 201 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Groups"
+  },
+  {
+    "type": "get",
+    "url": "/groups/my",
+    "title": "Get groups for the current user",
+    "name": "GetCurrentGroups",
+    "group": "Groups",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 201 OK\n[{\n   groupId: 2\n   name: \"Un grup\"\n},\n{\n   groupId: 3\n   name: \"Alt grup\"\n}]",
           "type": "json"
         }
       ]

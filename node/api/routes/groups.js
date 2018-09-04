@@ -72,6 +72,56 @@ router.post("/", jwtFilter, adminFilter, async (req, res) => {
     .json({ succes: true });
 });
 
+
+/**
+ * @api {post} /groups/:groupId/:userId Add user to group
+ * @apiName AddUserToGroup
+ * @apiGroup Groups
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 201 OK
+ * {
+ *    success: true
+ * }
+ */
+router.post("/:groupId/:userId", jwtFilter, async (req, res) => {
+  const { groupId, userId } = req.params;
+  await query("INSERT INTO user_group (user_id, group_id) VALUES (?, ?)", [ userId, groupId ]);
+  res.json({ succes: true });
+});
+
+/**
+ * @api {get} /groups/my Get groups for the current user
+ * @apiName GetCurrentGroups
+ * @apiGroup Groups
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 201 OK
+ * [{
+ *    groupId: 2
+ *    name: "Un grup"
+ * },
+ * {
+ *    groupId: 3
+ *    name: "Alt grup"
+ * }]
+ */
+
+router.get("/my", jwtFilter, async (req, res) => {
+  const { userId } = req.decodedToken;
+  const groups = await query(`
+    SELECT
+      group_id AS groupId,
+      name
+    FROM group_user
+    JOIN groups ON groups.group_id = group_user.group_id
+    WHERE group_user.user_id = ?
+  `, userId);
+  res.json(groups);
+});
+
 /**
  * @api {get} /groups/:groupId Get group by id
  * @apiName GetGroupById
