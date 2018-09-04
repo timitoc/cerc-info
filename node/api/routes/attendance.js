@@ -8,6 +8,24 @@ const { query } = global;
 const router = express.Router();
 
 /**
+ * @api {post} /attendance/:groupId/:date Add attendance
+ * @apiName AddAttendance
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
+router.post("/:groupId/:date", async (req, res) => {
+  const { groupId, date } = req.params;
+  await query("INSERT INTO attendance (date, group_id) VALUES (?, ?)", [ date, groupId ]);
+});
+
+/**
  * @api {post} /attendance/:groupId/:date/:userId Add user to attendance
  * @apiName AddUser
  * @apiGroup Attdendance
@@ -89,6 +107,28 @@ router.get("/:groupId/:date", async (req, res) => {
   WHERE group_id = ?
   `, groupId);
 
+  res.json(attendanceList);
+});
+
+/**
+ * @api {get} /attendance/:groupId Get all attendances from group
+ * @apiName GetAllAtendances
+ * @apiGroup Attdendance
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * [{
+ *    attendanceId: 3,
+ *    date: "..."
+ * },{
+ * ...
+ * }]
+ */
+router.get("/:groupId", async (req, res) => {
+  const { groupId } = req.body;
+  const attendanceList = await query("SELECT attendance_id AS attendanceId, date FROM attendance WHERE group_id = ?", groupId);
   res.json(attendanceList);
 });
 

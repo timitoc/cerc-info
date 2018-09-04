@@ -40,9 +40,11 @@ router.get("/", jwtFilter, async (req, res) => {
     res.json(req.decodedToken);
   }*/
 
-  const activeGroupId = R.prop(R.head(await query("SELECT active_group FROM users WHERE user_id = ?", userId)), "active_group");
 
-  const result = R.merge(req.decodedToken, { activeGroupId });
+  let result = req.decodedToken;
+  result.activeGroupId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
+
+  console.log(result);
 
   res.json(result);
 });

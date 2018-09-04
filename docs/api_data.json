@@ -42,6 +42,38 @@
   },
   {
     "type": "post",
+    "url": "/attendance/:groupId/:date",
+    "title": "Add attendance",
+    "name": "AddAttendance",
+    "group": "Attdendance",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/attendance.js",
+    "groupTitle": "Attdendance"
+  },
+  {
+    "type": "post",
     "url": "/attendance/:groupId/:date/:userId",
     "title": "Add user to attendance",
     "name": "AddUser",
@@ -64,6 +96,38 @@
         {
           "title": "Success response:",
           "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/attendance.js",
+    "groupTitle": "Attdendance"
+  },
+  {
+    "type": "get",
+    "url": "/attendance/:groupId",
+    "title": "Get all attendances from group",
+    "name": "GetAllAtendances",
+    "group": "Attdendance",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n[{\n   attendanceId: 3,\n   date: \"...\"\n},{\n...\n}]",
           "type": "json"
         }
       ]
