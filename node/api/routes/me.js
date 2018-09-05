@@ -42,9 +42,11 @@ router.get("/", jwtFilter, async (req, res) => {
 
 
   let result = req.decodedToken;
-  result.activeGroupId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
+  const mappingId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
 
-  console.log(result);
+  const activeGroupId = R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", mappingId)).groupId;
+
+  result.activeGroupId = activeGroupId;
 
   res.json(result);
 });
@@ -69,23 +71,37 @@ router.get("/", jwtFilter, async (req, res) => {
  * }
  */
 router.post("/active-group", jwtFilter, async (req, res) => {
-  const { userId } = req.decodedToken;
+  const { userId, privilege } = req.decodedToken;
   const { groupId } = req.body;
 
-  const userGroupRelationId = R.head(await query("SELECT user_group_id FROM user_group WHERE user_id = ? AND group_id = ?", [ userId, groupId ]));
+  const userGroupRelationId = R.path(["userGroupRelationId"], R.head(
+    await query("SELECT user_group_id AS userGroupRelationId FROM user_group WHERE user_id = ? AND group_id = ?", [ userId, groupId ])));
 
-  if (R.isNil(userGroupRelationId)) {
-    return res.json({
-      error: "No user-group mapping found!"
-    })
+
+  if (privilege == 0) {
+
+    if (R.isNil(userGroupRelationId)) {
+      return res.status(500).json({ error: "No user-group mapping found!" });
+    }
+
+    // Modify user's active group
+    await query("UPDATE users SET active_group = ? WHERE user_id = ?", [ userGroupRelationId, userId ]);
+
+    res.json({ success: true });
+  } else {
+
+    if (R.isNil(userGroupRelationId)) {
+      // Insert user-group mapping
+       const { insertId } = await query("INSERT INTO user_group (user_id, group_id) VALUES (?, ?)", [ userId, groupId ]);
+       console.log("insertId", insertId);
+       // Set active group
+       await query("UPDATE users SET active_group = ? WHERE user_id = ?", [ insertId , userId ]);
+    } else {
+       await query("UPDATE users SET active_group = ? WHERE user_id = ?", [ userGroupRelationId, userId ]);
+    }
+
+    res.json({ success: true });
   }
-
-  // Modify user's active group
-  await query("UPDATE users SET active_group = ? WHERE user_id = ?", [ userGroupRelationId, userId ]);
-
-  res.json({
-    success: true
-  })
 });
 
 module.exports = router;
