@@ -32,13 +32,42 @@ const jwtFilter = require("../filters/jwt-filter.js");
  *        "title": "Lectia 2",
  *        "content": "Continutul lectiei",
  *        "authorId": 2,
- *        "tags": [..]
+ *        "tags": [..],
+ *        "authorName": "...",
+ *        "isRecommended": false
  *    }
  * ]
  */
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
-  const lessonList = await query("SELECT lesson_id AS lessonId, title, author_id AS authorId, content, tags FROM lessons");
+
+  const activeGroupMappingId = R.path(["activeGroup"],
+    R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
+
+  const activeGroupId = R.path(["groupId"],
+    R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
+
+  if (R.isNil(activeGroupId)) {
+    return res.status(500).json({ error: "Active group not found !" });
+  }
+
+  const lessonList = await query(`
+    SELECT
+      lesson_id AS lessonId,
+      title,
+      author_id AS authorId,
+      content,
+      tags,
+      users.name AS authorName,
+      (
+        SELECT
+          COUNT(1) != 0
+        FROM recommended_lessons
+        WHERE recommended_lessons.lesson_id = lessonId AND recommended_lessons.group_id = ?
+      ) AS isRecommended
+    FROM lessons
+    JOIN users ON users.user_id = lessons.author_id
+  `);
   const lessonListSplittedTags = R.map(item => R.merge(item, { tags: R.split(",", item.tags )}), lessonList);
 
   res.json(lessonListSplittedTags);
@@ -58,17 +87,47 @@ router.get("/", jwtFilter, async (req, res) => {
  * HTTP 200 OK
  * {
  *   "lessonId": 2,
- *   "tt": "Lectia 1",
+ *   "title": "Lectia 2",
  *   "content": "Continutul lectiei",
- *   "authorId": 2
- *   "tags": [..]
+ *   "authorId": 2,
+ *   "authorName": "John Smith"
+ *   "tags": [..],
+ *   "isRecommended": false
  * }
  */
-router.get("/:lessonId", async (req, res) => {
+router.get("/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
+  const { userId } = req.decodedToken;
+
+  const activeGroupMappingId = R.path(["activeGroup"],
+    R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
+
+  const activeGroupId = R.path(["groupId"],
+    R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
+
+  if (R.isNil(activeGroupId)) {
+    return res.status(500).json({ error: "Active group not found !" });
+  }
+
   const lesson = R.head(await query(`
-    SELECT lesson_id AS lessonId, title, author_id AS authorId, content, tags FROM lessons WHERE lesson_id = ?
-  `, lessonId));
+    SELECT
+      lesson_id AS lessonId,
+      title,
+      author_id AS authorId,
+      content,
+      tags,
+      users.name AS authorName,
+      (
+        SELECT
+          COUNT(1) != 0
+        FROM recommended_lessons
+        WHERE recommended_lessons.lesson_id = lessonId AND recommended_lessons.group_id = ?
+      ) AS isRecommended
+    FROM lessons
+    JOIN users ON users.user_id = lessons.author_id
+    WHERE lesson_id = ?
+  `, [activeGroupId, lessonId]));
+
   const lessonSplittedTags = R.merge(lesson, { tags: R.split(",", lesson.tags )});
   res.json(lessonSplittedTags);
 });
@@ -131,8 +190,12 @@ router.post("/", async (req, res) => {
  *    "success": true
  *  }
  */
-router.put("/:lessonId", jwtFilter, async (req, res) => {
+router.put("/:lessonId", async (req, res) => {
   const { lessonId } = req.params;
+
+  if (req.body["tags"]) {
+    req.body["tags"] = R.join(",", req.body["tags"])
+  }
 
   const values = Array
     .of("title", "content", "authorId" )
@@ -142,14 +205,13 @@ router.put("/:lessonId", jwtFilter, async (req, res) => {
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  const valuesJoinedTags = R.ifElse(
-    R.has("tags"),
-    R.merge(values, { tags: R.join(",", values.tags )}),
-    values
-  );
+  console.log(values);
 
-  const keyEnumeration = valuesJoinedTags.map(item => `${snake(item.key)}=?`).join(', ');
-  const valueEnumeration = valuesJoinedTags.map(item => item.value);
+  const keyEnumeration = R.join(", ", values.map(item => `${snake(item.key)}=?`));
+  console.log(keyEnumeration);
+
+  const valueEnumeration = values.map(item => item.value);
+  console.log(valueEnumeration);
 
   await query(`UPDATE lessons SET ${keyEnumeration} WHERE lesson_id = ?`, R.append(lessonId, valueEnumeration));
   res

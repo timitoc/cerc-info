@@ -30,7 +30,7 @@ const router = express.Router();
 
 router.get("/", jwtFilter, async (req, res) => {
   console.log("req.decodedToken", req.decodedToken);
-  const { userId } = req.decodedToken;
+  const { userId, privilege } = req.decodedToken;
   console.log("userId", userId);
   /*const groups = await query("SELECT group_id FROM group_user WHERE user_id = ? AND active = 1 LIMIT 1", userId);
   const group = groups.length && groups[0];
@@ -41,12 +41,16 @@ router.get("/", jwtFilter, async (req, res) => {
   }*/
 
 
+
   let result = req.decodedToken;
-  const mappingId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
 
-  const activeGroupId = R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", mappingId)).groupId;
+  if (privilege != 2) {
+    const mappingId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
 
-  result.activeGroupId = activeGroupId;
+    const activeGroupId = R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", mappingId)).groupId;
+
+    result.activeGroupId = activeGroupId;
+  }
 
   res.json(result);
 });

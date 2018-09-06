@@ -902,7 +902,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"tt\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2\n  \"tags\": [..]\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"title\": \"Lectia 2\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"authorName\": \"John Smith\"\n  \"tags\": [..],\n  \"isRecommended\": false\n}",
           "type": "json"
         }
       ]
@@ -939,7 +939,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"title\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..]\n   },\n   {\n       \"lessonId\": 3,\n       \"title\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..]\n   }\n]",
+          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"title\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..]\n   },\n   {\n       \"lessonId\": 3,\n       \"title\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..],\n       \"authorName\": \"...\",\n       \"isRecommended\": false\n   }\n]",
           "type": "json"
         }
       ]

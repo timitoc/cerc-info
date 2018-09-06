@@ -127,6 +127,11 @@ CREATE TABLE `invitation_codes` (
 	PRIMARY KEY (`code_id`)
 );
 
+CREATE TABLE `recommended_lessons` (
+	`group_id` INT NOT NULL,
+	`lesson_id` INT NOT NULL
+);
+
 ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
 
 ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
@@ -164,3 +169,7 @@ ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk0` FOREIGN KEY (`submit_
 ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk1` FOREIGN KEY (`task_id`) REFERENCES `tasks`(`task_id`);
 
 ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
+
+ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
+
+ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
