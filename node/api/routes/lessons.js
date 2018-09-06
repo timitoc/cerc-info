@@ -21,7 +21,7 @@ const jwtFilter = require("../filters/jwt-filter.js");
  * [
  *    {
  *        "lessonId": 2,
- *        "name": "Lectia 1",
+ *        "title": "Lectia 1",
  *        "content": "Continutul lectiei",
  *        "authorId": 2,
  *        "tags": "dynammic programming",
@@ -29,7 +29,7 @@ const jwtFilter = require("../filters/jwt-filter.js");
  *    },
  *    {
  *        "lessonId": 3,
- *        "name": "Lectia 2",
+ *        "title": "Lectia 2",
  *        "content": "Continutul lectiei",
  *        "authorId": 2,
  *        "tags": "math,modular arithmetic",
@@ -56,7 +56,7 @@ router.get("/", jwtFilter, async (req, res) => {
  * HTTP 200 OK
  * {
  *   "lessonId": 2,
- *   "name": "Lectia 1",
+ *   "tt": "Lectia 1",
  *   "content": "Continutul lectiei",
  *   "authorId": 2,
  *   "tags": "dynammic programming,graph theory",
@@ -78,7 +78,7 @@ router.get("/:id", async (req, res) => {
  *
  * @apiParamExample {json} Request example:
  * {
- *  	"name": "Ciclu hamiltonian de cost minim",
+ *  	"title": "Ciclu hamiltonian de cost minim",
  *  	"content": "Continutul lectiei",
  *  	"authorId": 2,
  *  	"tags": "dynammic programming,graph theory"
@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
  * HTTP 201 OK
  * {
  *    "lessonId": 3,
- *    "name": "Ciclu hamiltonian de cost minim"",
+ *    "title": "Ciclu hamiltonian de cost minim"",
  *    "content": "Continutul lectiei",
  *    "authorId": 2,
  *    "tags": "dynammic programming,graph theory",
@@ -96,9 +96,9 @@ router.get("/:id", async (req, res) => {
  * }
  */
 router.post("/", async (req, res) => {
-  const { name, content, authorId, tags } = req.body;
-  const { insertId } = await query("INSERT INTO lessons (name, content, authorId, tags, dateAdded) VALUES (?, ?, ?, ?, ?)",
-    [ name, content, authorId, tags, new Date() ]);
+  const { title, content, authorId, tags } = req.body;
+  const { insertId } = await query("INSERT INTO lessons (title, content, authorId, tags, dateAdded) VALUES (?, ?, ?, ?, ?)",
+    [ title, content, authorId, tags, new Date() ]);
 
   res
     .status(201)
@@ -118,7 +118,7 @@ router.post("/", async (req, res) => {
  *
  * @apiParamExample {json} Request example (only use the fields that you want to update):
  * {
- *   "name": "Noul nume al lecţiei",
+ *   "title": "Noul nume al lecţiei",
  *   "content": "Noul conţinut"
  * }
  *
@@ -126,7 +126,7 @@ router.post("/", async (req, res) => {
  * HTTP 201 OK
  * {
  *    "lessonId": 3,
- *    "name": "Noul nume"",
+ *    "title": "Noul nume"",
  *    "content": "Noul conţinut",
  *    "authorId": 2,
  *    "tags": "dynammic programming,graph theory",
@@ -137,7 +137,7 @@ router.put("/:lessonId", jwtFilter, async (req, res) => {
   const { groupId, lessonId } = req.params;
 
   const values = Array
-    .of("name", "content", "tags", "authorId", "groupId")
+    .of("title", "content", "tags", "authorId", "groupId")
     .map(item =>  ({
       key: item,
       value: req.body[item]

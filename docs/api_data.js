@@ -506,6 +506,175 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/homework",
+    "title": "Add homework to your active group",
+    "name": "AddHomework",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"title\": \"O tema\",\n  \"description\": \"Descrierea temei\",\n  \"tags\": [\"stack\", \"queue\"]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true,\n  homeworkId: 8\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "post",
+    "url": "/homework/task",
+    "title": "Add task to homework",
+    "name": "AddTaskToHomework",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"homeworkId\": 1,\n  \"content\": \"...\",\n  \"type\": ...\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true,\n  taskId: 8\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "delete",
+    "url": "/homework/task/:taskId",
+    "title": "Delete task from homework",
+    "name": "DeleteTaskFromHomework",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "get",
+    "url": "/homework",
+    "title": "Get homework from your active group",
+    "name": "GetHomework",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n[{\n  homeworkId: 7,\n  title: \"Homework\",\n  description: \"...\",\n  tags: [..]\n}, ...]",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "get",
+    "url": "/homework/:homeworkId",
+    "title": "Get homework (with tasks) by id",
+    "name": "GetHomeworkById",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  homeworkId: ...,\n  groupId: ...,\n  title: ...,\n  description: ...,\n  tags: [...],\n  tasks: [\n  { taskId: ..., type: ..., content: ...}, ...\n  ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "post",
     "url": "/invite",
     "title": "Generate invitation for a teacher",
     "group": "Invitations",
@@ -624,7 +793,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n \t\"name\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n \t\"tags\": \"dynammic programming,graph theory\"\n}",
+          "content": "{\n \t\"title\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n \t\"tags\": \"dynammic programming,graph theory\"\n}",
           "type": "json"
         }
       ]
@@ -633,7 +802,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"name\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
           "type": "json"
         }
       ]
@@ -740,7 +909,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"name\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"tt\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
           "type": "json"
         }
       ]
@@ -777,7 +946,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"name\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"name\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
+          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"title\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"title\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
           "type": "json"
         }
       ]
@@ -832,7 +1001,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example (only use the fields that you want to update):",
-          "content": "{\n  \"name\": \"Noul nume al lecţiei\",\n  \"content\": \"Noul conţinut\"\n}",
+          "content": "{\n  \"title\": \"Noul nume al lecţiei\",\n  \"content\": \"Noul conţinut\"\n}",
           "type": "json"
         }
       ]
@@ -841,7 +1010,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"name\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
           "type": "json"
         }
       ]
