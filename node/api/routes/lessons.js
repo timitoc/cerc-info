@@ -98,7 +98,8 @@ router.get("/:lessonId", async (req, res) => {
  */
 router.post("/", async (req, res) => {
   const { title, content, authorId, tags } = req.body;
-  const { insertId } = await query("INSERT INTO lessons (title, content, author_id, tags) VALUES (?, ?, ?)",
+  console.log({ title, content, authorId, tags  });
+  const { insertId } = await query("INSERT INTO lessons (title, content, author_id, tags) VALUES (?, ?, ?, ?)",
     [ title, content, authorId, R.join(",", tags) ]);
 
   res
@@ -120,22 +121,18 @@ router.post("/", async (req, res) => {
  * @apiParamExample {json} Request example (only use the fields that you want to update):
  * {
  *   "title": "Noul nume al lecţiei",
- *   "content": "Noul conţinut"
+ *   "content": "Noul conţinut",
+ *   "tags": ["..."]
  * }
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    "lessonId": 3,
- *    "title": "Noul nume"",
- *    "content": "Noul conţinut",
- *    "authorId": 2
+ *    "success": true
  *  }
  */
 router.put("/:lessonId", jwtFilter, async (req, res) => {
-  return res.json("Not working");
-
-  const { groupId, lessonId } = req.params;
+  const { lessonId } = req.params;
 
   const values = Array
     .of("title", "content", "authorId" )
@@ -145,13 +142,19 @@ router.put("/:lessonId", jwtFilter, async (req, res) => {
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  const keyEnumeration = values.map(item => `${snake(item.key)}=?`).join(', ');
-  const valueEnumeration = values.map(item => item.value);
+  const valuesJoinedTags = R.ifElse(
+    R.has("tags"),
+    R.merge(values, { tags: R.join(",", values.tags )}),
+    values
+  );
+
+  const keyEnumeration = valuesJoinedTags.map(item => `${snake(item.key)}=?`).join(', ');
+  const valueEnumeration = valuesJoinedTags.map(item => item.value);
 
   await query(`UPDATE lessons SET ${keyEnumeration} WHERE lesson_id = ?`, R.append(lessonId, valueEnumeration));
   res
     .status(201)
-    .json(R.head(await query("SELECT * FROM lessons WHERE lesson_id = ?", lessonId)));
+    .json({ success: true });
 });
 
 /**

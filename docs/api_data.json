@@ -793,7 +793,7 @@
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n \t\"title\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n   \"tags\": [...]\n}",
+          "content": "{\n \t\"title\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n   \"tags\": [\"tag\", \"tag\"]\n}",
           "type": "json"
         }
       ]
@@ -994,7 +994,7 @@
       "examples": [
         {
           "title": "Request example (only use the fields that you want to update):",
-          "content": "{\n  \"title\": \"Noul nume al lecţiei\",\n  \"content\": \"Noul conţinut\"\n}",
+          "content": "{\n  \"title\": \"Noul nume al lecţiei\",\n  \"content\": \"Noul conţinut\",\n  \"tags\": [\"...\"]\n}",
           "type": "json"
         }
       ]
@@ -1003,7 +1003,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2\n }",
+          "content": "HTTP 201 OK\n{\n   \"success\": true\n }",
           "type": "json"
         }
       ]
