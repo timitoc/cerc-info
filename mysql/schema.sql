@@ -12,6 +12,8 @@ CREATE TABLE `lessons` (
 	`lesson_id` INT NOT NULL AUTO_INCREMENT,
 	`title` varchar(50) NOT NULL,
 	`author_id` INT NOT NULL,
+	`content` varchar(500) NOT NULL,
+	`tags` varchar(50) NOT NULL,
 	PRIMARY KEY (`lesson_id`)
 );
 

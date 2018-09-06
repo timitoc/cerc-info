@@ -1,6 +1,7 @@
 //TODO: re-test everything
 const express = require("express");
 const R = require("ramda");
+const snake = require('to-snake-case');
 
 const router = express.Router();
 
@@ -24,22 +25,23 @@ const jwtFilter = require("../filters/jwt-filter.js");
  *        "title": "Lectia 1",
  *        "content": "Continutul lectiei",
  *        "authorId": 2,
- *        "tags": "dynammic programming",
- *        "dateAdded": "2018-07-31T21:00:00.000Z"
+ *        "tags": [..]
  *    },
  *    {
  *        "lessonId": 3,
  *        "title": "Lectia 2",
  *        "content": "Continutul lectiei",
  *        "authorId": 2,
- *        "tags": "math,modular arithmetic",
- *        "dateAdded": "2018-07-31T21:00:00.000Z"
+ *        "tags": [..]
  *    }
  * ]
  */
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
-  res.json(await query("SELECT * FROM lessons"));
+  const lessonList = await query("SELECT lesson_id AS lessonId, title, author_id AS authorId, content, tags FROM lessons");
+  const lessonListSplittedTags = R.map(item => R.merge(item, { tags: R.split(",", item.tags )}), lessonList);
+
+  res.json(lessonListSplittedTags);
 });
 
 /**
@@ -58,14 +60,17 @@ router.get("/", jwtFilter, async (req, res) => {
  *   "lessonId": 2,
  *   "tt": "Lectia 1",
  *   "content": "Continutul lectiei",
- *   "authorId": 2,
- *   "tags": "dynammic programming,graph theory",
- *   "dateAdded": "2018-07-31T21:00:00.000Z"
+ *   "authorId": 2
+ *   "tags": [..]
  * }
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  res.json(R.head(await query("SELECT * FROM lessons WHERE lesson_id = ?", lessonId)));
+router.get("/:lessonId", async (req, res) => {
+  const { lessonId } = req.params;
+  const lesson = R.head(await query(`
+    SELECT lesson_id AS lessonId, title, author_id AS authorId, content, tags FROM lessons WHERE lesson_id = ?
+  `, lessonId));
+  const lessonSplittedTags = R.merge(lesson, { tags: R.split(",", lesson.tags )});
+  res.json(lessonSplittedTags);
 });
 
 /**
@@ -81,28 +86,24 @@ router.get("/:id", async (req, res) => {
  *  	"title": "Ciclu hamiltonian de cost minim",
  *  	"content": "Continutul lectiei",
  *  	"authorId": 2,
- *  	"tags": "dynammic programming,graph theory"
+ *    "tags": ["tag", "tag"]
  * }
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 201 OK
  * {
- *    "lessonId": 3,
- *    "title": "Ciclu hamiltonian de cost minim"",
- *    "content": "Continutul lectiei",
- *    "authorId": 2,
- *    "tags": "dynammic programming,graph theory",
- *    "dateAdded": "2018-07-31T21:00:00.000Z"
+ *    "success": true,
+ *    "lessonId": 3
  * }
  */
 router.post("/", async (req, res) => {
   const { title, content, authorId, tags } = req.body;
-  const { insertId } = await query("INSERT INTO lessons (title, content, authorId, tags, dateAdded) VALUES (?, ?, ?, ?, ?)",
-    [ title, content, authorId, tags, new Date() ]);
+  const { insertId } = await query("INSERT INTO lessons (title, content, author_id, tags) VALUES (?, ?, ?)",
+    [ title, content, authorId, R.join(",", tags) ]);
 
   res
     .status(201)
-    .json(R.head(await query("SELECT * FROM lessons WHERE lesson_id = ?", insertId)));
+    .json({ success: true, lessonId: insertId });
 });
 
 /**
@@ -128,29 +129,29 @@ router.post("/", async (req, res) => {
  *    "lessonId": 3,
  *    "title": "Noul nume"",
  *    "content": "Noul conţinut",
- *    "authorId": 2,
- *    "tags": "dynammic programming,graph theory",
- *    "dateAdded": "2018-07-31T21:00:00.000Z"
+ *    "authorId": 2
  *  }
  */
 router.put("/:lessonId", jwtFilter, async (req, res) => {
+  return res.json("Not working");
+
   const { groupId, lessonId } = req.params;
 
   const values = Array
-    .of("title", "content", "tags", "authorId", "groupId")
+    .of("title", "content", "authorId" )
     .map(item =>  ({
       key: item,
       value: req.body[item]
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  const keyEnumeration = values.map(item => `${item.key}=?`).join(', ');
+  const keyEnumeration = values.map(item => `${snake(item.key)}=?`).join(', ');
   const valueEnumeration = values.map(item => item.value);
 
-  await query(`UPDATE lessons SET ${keyEnumeration} WHERE lessonId = ?`, R.append(lessonId, valueEnumeration));
+  await query(`UPDATE lessons SET ${keyEnumeration} WHERE lesson_id = ?`, R.append(lessonId, valueEnumeration));
   res
     .status(201)
-    .json(R.head(await query("SELECT * FROM lessons WHERE lessonId = ?", lessonId)));
+    .json(R.head(await query("SELECT * FROM lessons WHERE lesson_id = ?", lessonId)));
 });
 
 /**
@@ -160,8 +161,7 @@ router.put("/:lessonId", jwtFilter, async (req, res) => {
  *
  * @apiPermission teacher
  * @apiHeader {String} Authorization Bearer [jwt]
- *
- * @apiParam {String} groupId The group id (useless, kept only for symmetrical purposes)
+
  * @apiParam {String} lessonId The lesson id
  *
  * @apiSuccessExample {json} Success response:
@@ -170,10 +170,10 @@ router.put("/:lessonId", jwtFilter, async (req, res) => {
  *   success: true
  * }
  */
-router.delete("/:groupId/lessons/:lessonId", jwtFilter, async (req, res) => {
+router.delete("/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
 
-  await query("UPDATE lessons SET deleted = 1 WHERE lessonId = ?", lessonId);
+  await query("DELETE FROM lessons WHERE lesson_id = ?", lessonId);
   res.status(201).json({
     success: true
   });

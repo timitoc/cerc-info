@@ -793,7 +793,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n \t\"title\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n \t\"tags\": \"dynammic programming,graph theory\"\n}",
+          "content": "{\n \t\"title\": \"Ciclu hamiltonian de cost minim\",\n \t\"content\": \"Continutul lectiei\",\n \t\"authorId\": 2,\n   \"tags\": [...]\n}",
           "type": "json"
         }
       ]
@@ -802,7 +802,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Ciclu hamiltonian de cost minim\"\",\n   \"content\": \"Continutul lectiei\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 201 OK\n{\n   \"success\": true,\n   \"lessonId\": 3\n}",
           "type": "json"
         }
       ]
@@ -838,13 +838,6 @@ define({ "api": [
     "parameter": {
       "fields": {
         "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "groupId",
-            "description": "<p>The group id (useless, kept only for symmetrical purposes)</p>"
-          },
           {
             "group": "Parameter",
             "type": "String",
@@ -909,7 +902,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"tt\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"tags\": \"dynammic programming,graph theory\",\n  \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"tt\": \"Lectia 1\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2\n  \"tags\": [..]\n}",
           "type": "json"
         }
       ]
@@ -946,7 +939,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"title\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"dynammic programming\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   },\n   {\n       \"lessonId\": 3,\n       \"title\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": \"math,modular arithmetic\",\n       \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n   }\n]",
+          "content": "HTTP 200 OK\n[\n   {\n       \"lessonId\": 2,\n       \"title\": \"Lectia 1\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..]\n   },\n   {\n       \"lessonId\": 3,\n       \"title\": \"Lectia 2\",\n       \"content\": \"Continutul lectiei\",\n       \"authorId\": 2,\n       \"tags\": [..]\n   }\n]",
           "type": "json"
         }
       ]
@@ -1010,7 +1003,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2,\n   \"tags\": \"dynammic programming,graph theory\",\n   \"dateAdded\": \"2018-07-31T21:00:00.000Z\"\n }",
+          "content": "HTTP 201 OK\n{\n   \"lessonId\": 3,\n   \"title\": \"Noul nume\"\",\n   \"content\": \"Noul conţinut\",\n   \"authorId\": 2\n }",
           "type": "json"
         }
       ]
