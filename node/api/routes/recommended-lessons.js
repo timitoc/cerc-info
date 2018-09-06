@@ -9,7 +9,7 @@ const jwtFilter = require("../filters/jwt-filter.js");
 
 /**
  * @api {get} /recommended-lessons Get the recommended lessons for your active group
- * @apiName Recommended
+ * @apiName GetRecommended
  * @apiGroup Recommended
  *
  * @apiHeader {String} Authorization Bearer [jwt]
@@ -30,7 +30,7 @@ router.get("/", jwtFilter, async (req, res) => {
 
 /**
  * @api {post} /recommended_lessons Add a recommended lesson to your active group
- * @apiName Recommended
+ * @apiName AddRecommended
  * @apiGroup Recommended
  *
  * @apiHeader {String} Authorization Bearer [jwt]
@@ -59,7 +59,7 @@ router.post("/", jwtFilter, async (req, res) => {
 
 /**
  * @api {delete} /recommended_lessons/:lessonId Remove a recommended lesson from your active group
- * @apiName Recommended
+ * @apiName DeleteRecommended
  * @apiGroup Recommended
  *
  * @apiHeader {String} Authorization Bearer [jwt]

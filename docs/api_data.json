@@ -137,38 +137,6 @@
     "groupTitle": "Attdendance"
   },
   {
-    "type": "get",
-    "url": "/attendance/users/:attendanceId",
-    "title": "Get users from attendance",
-    "name": "GetUsers",
-    "group": "Attdendance",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "Authorization",
-            "description": "<p>Bearer [jwt]</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  success: true\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "api/routes/attendance.js",
-    "groupTitle": "Attdendance"
-  },
-  {
     "type": "delete",
     "url": "/attendance/:groupId/:date/:userId",
     "title": "Remove user from attendance",
@@ -957,33 +925,10 @@
     "groupTitle": "Me"
   },
   {
-    "type": "get",
-    "url": "/recommended-lessons",
-    "title": "Get the recommended lessons for your active group",
-    "name": "Recommended",
-    "group": "Recommended",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "Authorization",
-            "description": "<p>Bearer [jwt]</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "api/routes/recommended-lessons.js",
-    "groupTitle": "Recommended"
-  },
-  {
     "type": "post",
     "url": "/recommended_lessons",
     "title": "Add a recommended lesson to your active group",
-    "name": "Recommended",
+    "name": "AddRecommended",
     "group": "Recommended",
     "header": {
       "fields": {
@@ -1024,7 +969,7 @@
     "type": "delete",
     "url": "/recommended_lessons/:lessonId",
     "title": "Remove a recommended lesson from your active group",
-    "name": "Recommended",
+    "name": "DeleteRecommended",
     "group": "Recommended",
     "header": {
       "fields": {
@@ -1060,6 +1005,29 @@
           "type": "json"
         }
       ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/recommended-lessons.js",
+    "groupTitle": "Recommended"
+  },
+  {
+    "type": "get",
+    "url": "/recommended-lessons",
+    "title": "Get the recommended lessons for your active group",
+    "name": "GetRecommended",
+    "group": "Recommended",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
     },
     "version": "0.0.0",
     "filename": "api/routes/recommended-lessons.js",
