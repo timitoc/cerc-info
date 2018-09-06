@@ -83,4 +83,37 @@ router.delete("/:lessonId", jwtFilter, async (req, res) => {
   })
 });
 
+/**
+ * @api {get} /recommended_lessons/:lessonId/toggle Toggle recommended lesson
+ * @apiName ToggleRecommended
+ * @apiGroup Recommended
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * {
+ *   success: true
+ * }
+ */
+
+router.get("/:lessonId/toggle", jwtFilter, async (req, res) => {
+  const activeGroupId = R.prop(R.head(await query("SELECT active_group FROM users WHERE user_id = ?", userId)), "active_group");
+  const { lessonId } = req.params;
+
+  const lesson = R.head(await query("SELECT * FROM recommended_lessons WHERE group_id = ? AND lesson_id = ?",
+    [activeGroupId, lessonId]));
+
+  if (R.isNil(lesson)) {
+
+    await query("INSERT INTO recommended_lessons (lesson_id, group_id) VALUES (?, ?)", [ lessonId, activeGroupId ]);
+  } else {
+    await query("DELETE FROM recommended_lessons WHERE group_id = ? AND lesson_id = ?", [ activeGroupId, lessonId ]);
+  }
+
+  res.json({
+    success: true
+  })
+});
+
 module.exports = router;

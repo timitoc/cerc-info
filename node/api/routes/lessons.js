@@ -67,7 +67,8 @@ router.get("/", jwtFilter, async (req, res) => {
       ) AS isRecommended
     FROM lessons
     JOIN users ON users.user_id = lessons.author_id
-  `);
+  `, [activeGroupId]);
+
   const lessonListSplittedTags = R.map(item => R.merge(item, { tags: R.split(",", item.tags )}), lessonList);
 
   res.json(lessonListSplittedTags);
@@ -198,7 +199,7 @@ router.put("/:lessonId", async (req, res) => {
   }
 
   const values = Array
-    .of("title", "content", "authorId" )
+    .of("title", "content", "authorId", "tags" )
     .map(item =>  ({
       key: item,
       value: req.body[item]

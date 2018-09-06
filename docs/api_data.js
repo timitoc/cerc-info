@@ -1196,6 +1196,38 @@ define({ "api": [
     "groupTitle": "Recommended"
   },
   {
+    "type": "get",
+    "url": "/recommended_lessons/:lessonId/toggle",
+    "title": "Toggle recommended lesson",
+    "name": "ToggleRecommended",
+    "group": "Recommended",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/recommended-lessons.js",
+    "groupTitle": "Recommended"
+  },
+  {
     "type": "post",
     "url": "/register",
     "title": "Register user account",
