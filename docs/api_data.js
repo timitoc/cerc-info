@@ -330,6 +330,51 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/groups/:groupId/all-users",
+    "title": "Get all users that are in the group or not",
+    "name": "GetAllUsers",
+    "group": "Groups",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "groupId",
+            "description": "<p>The group id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n[{\n   userId: ...,\n   name: ...,\n   inGroup: ...\n},...]",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/groups.js",
+    "groupTitle": "Groups"
+  },
+  {
+    "type": "get",
     "url": "/groups/my",
     "title": "Get groups for the current user",
     "name": "GetCurrentGroups",
@@ -527,7 +572,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "{\n  \"title\": \"O tema\",\n  \"description\": \"Descrierea temei\",\n  \"tags\": [\"stack\", \"queue\"]\n}",
+          "content": "{\n  \"title\": \"O tema\",\n  \"description\": \"Descrierea temei\",\n  \"tags\": [\"stack\", \"queue\"],\n  \"tasks\": [\n    {\"content\": ..., \"type\": ...},\n    ...\n  ]\n}",
           "type": "json"
         }
       ]
