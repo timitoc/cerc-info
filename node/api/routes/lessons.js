@@ -1,13 +1,41 @@
-//TODO: re-test everything
 const express = require("express");
 const R = require("ramda");
 const snake = require('to-snake-case');
+const fs = require("fs");
+const path = require("path");
+const randomstring = require("randomstring");
+const mysql = require("mysql");
+const sha1 = require('node-sha1');
+
+const fileUpload = require('express-fileupload');
+const serveIndex = require('serve-index');
+
+const { query } = global;
+const jwtFilter = require("../filters/jwt-filter.js");
 
 const router = express.Router();
 
-const { query } = global;
+router.use(fileUpload());
+//router.use('/list', express.static('/'), serveIndex('/', {'icons': true}))
 
-const jwtFilter = require("../filters/jwt-filter.js");
+
+router.get("/download/:fileName", async (req, res) => {
+  const { fileName } = req.params;
+  const uploadObject = R.head(await query(
+    "SELECT original_filename AS originalName, mime_type AS mimeType FROM lesson_uploads WHERE filename = ?", fileName));
+
+  if (R.isNil(uploadObject)) {
+    return res.status(404);
+  }
+
+  const { originalName, mimeType } = uploadObject;
+
+  res.attachment(originalName);
+  res.type(mimeType);
+
+  const fileContent = fs.readFileSync(`/usr/src/uploads/${fileName}`);
+  res.send(fileContent);
+});
 
 /**
  * @api {get} /lessons Get all lessons
@@ -130,7 +158,16 @@ router.get("/:lessonId", jwtFilter, async (req, res) => {
   `, [activeGroupId, lessonId]));
 
   const lessonSplittedTags = R.merge(lesson, { tags: R.split(",", lesson.tags )});
-  res.json(lessonSplittedTags);
+
+  const lessonUploads = await query(`
+    SELECT
+      original_filename AS filename, CONCAT("/lessons/download/",filename) AS url
+    FROM lesson_uploads
+    WHERE lesson_id = ?
+  `, [lessonId]);
+
+    
+  res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads }));
 });
 
 /**
@@ -157,10 +194,41 @@ router.get("/:lessonId", jwtFilter, async (req, res) => {
  * }
  */
 router.post("/", async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
   const { title, content, authorId, tags } = req.body;
-  console.log({ title, content, authorId, tags  });
   const { insertId } = await query("INSERT INTO lessons (title, content, author_id, tags) VALUES (?, ?, ?, ?)",
-    [ title, content, authorId, R.join(",", tags) ]);
+    [ title, content, authorId, tags ]);
+
+  if (req.files) {
+    let { uploads } = req.files;
+    
+    if (!R.is(Array, uploads)) {
+      uploads = [ uploads ];
+    }
+
+    await Promise.all(uploads.map(upload => {
+      return new Promise((resolve) => {
+        const originalName = upload.name;
+        const mimeType = upload.mimetype;
+        const fileContent = upload.data;
+
+        const fileHash = sha1(fileContent);
+
+        const fileName = randomstring.generate({ length: 20, charset: 'alphabetic' });
+
+        upload.mv(`/usr/src/uploads/${fileName}`)
+          .then(() => {
+              query("INSERT INTO lesson_uploads (lesson_id, filename, original_filename, mime_type, file_hash) VALUES (?, ?, ?, ?, ?)",
+                [ insertId, fileName, originalName, mimeType, fileHash ])
+            .then(() => {
+              resolve();
+            });
+          });
+      });
+    }));
+    
+  }
 
   res
     .status(201)
@@ -194,10 +262,6 @@ router.post("/", async (req, res) => {
 router.put("/:lessonId", async (req, res) => {
   const { lessonId } = req.params;
 
-  if (req.body["tags"]) {
-    req.body["tags"] = R.join(",", req.body["tags"])
-  }
-
   const values = Array
     .of("title", "content", "authorId", "tags" )
     .map(item =>  ({
@@ -206,18 +270,65 @@ router.put("/:lessonId", async (req, res) => {
     }))
     .filter(item => !R.isEmpty(item.value) && !R.isNil(item.value));
 
-  console.log(values);
-
   const keyEnumeration = R.join(", ", values.map(item => `${snake(item.key)}=?`));
-  console.log(keyEnumeration);
 
   const valueEnumeration = values.map(item => item.value);
-  console.log(valueEnumeration);
 
   await query(`UPDATE lessons SET ${keyEnumeration} WHERE lesson_id = ?`, R.append(lessonId, valueEnumeration));
-  res
-    .status(201)
-    .json({ success: true });
+
+  const oldFiles = R.split(",", R.prop("oldFiles", req.body));
+
+  const existsingFileList = await query(`
+    SELECT
+      filename AS fileName,
+      original_filename AS originalFilename,
+      lesson_upload_id AS uploadId,
+      file_hash AS fileHash
+    FROM lesson_uploads
+    WHERE lesson_id = ?
+  `, lessonId);
+
+  const existsingFileListFileNames = R.map(item => item.fileName, existsingFileList);
+
+  const filesToDelete = R.difference(existsingFileListFileNames, oldFiles);
+
+  for (const file of filesToDelete) {
+    await query("DELETE FROM lesson_uploads WHERE filename = ?", file);
+  }
+
+  if (req.files) {
+    let { uploads } = req.files;
+    
+    if (!R.is(Array, uploads)) {
+      uploads = [ uploads ];
+    }
+
+    uploads = R.uniqBy(item => sha1(item.data), uploads);
+
+    await Promise.all(uploads.map(upload => {
+      return new Promise((resolve) => {
+        const originalName = upload.name;
+        const mimeType = upload.mimetype;
+        const fileContent = upload.data;
+
+        const fileHash = sha1(fileContent);
+        console.log(`computed ${fileHash}`);
+
+        const fileName = randomstring.generate({ length: 20, charset: 'alphabetic' });
+
+        upload.mv(`/usr/src/uploads/${fileName}`)
+          .then(() => {
+              query("INSERT INTO lesson_uploads (lesson_id, filename, original_filename, mime_type, file_hash) VALUES (?, ?, ?, ?, ?)",
+                [ lessonId, fileName, originalName, mimeType, fileHash ])
+            .then(() => {
+              resolve();
+            });
+          });
+      });
+    }));
+  }
+
+  res.json({ success: true });
 });
 
 /**
@@ -240,10 +351,7 @@ router.delete("/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
 
   await query("DELETE FROM lessons WHERE lesson_id = ?", lessonId);
-  res.status(201).json({
-    success: true
-  });
+  res.status(201).json({ success: true });
 });
-
 
 module.exports = router;

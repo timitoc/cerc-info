@@ -1,7 +1,10 @@
 const express = require("express");
+const fileUpload = require('express-fileupload');
+const randomstring = require("randomstring");
 const R = require("ramda");
 
 const router = express.Router();
+router.use(fileUpload());
 
 const { query } = global;
 
@@ -18,7 +21,11 @@ const jwtFilter = require("../filters/jwt-filter.js");
  * {
  *   "title": "O tema",
  *   "description": "Descrierea temei",
- *   "tags": ["stack", "queue"]
+ *   "tags": ["stack", "queue"],
+ *   "tasks": [
+ *     {"content": ..., "type": ...},
+ *     ...
+ *   ]
  * }
  *
  * @apiSuccessExample {json} Success response:
@@ -46,6 +53,11 @@ router.post("/", jwtFilter, async (req, res) => {
     Array.of(activeGroupId, title, description, R.join(",", tags)));
 
   const { insertId } = queryResult;
+
+  const { tasks } = req.body;
+
+  await query("INSERT INTO tasks (homework_id, content, type) VALUES (?, ?, ?)",
+    R.map(item => [insertId, R.prop("content", item), R.prop("type", item)], tasks));
 
   res.json({ success: true, homeworkId: insertId });
 });

@@ -17,15 +17,26 @@ const jwtFilter = require("../filters/jwt-filter.js");
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
 
-  const activeGroupId = R.prop(R.head(await query("SELECT active_group FROM users WHERE user_id = ?", userId)), "active_group");
+  const mappingId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
 
-  const lessons = await query(`
-    SELECT lesson_id FROM recommended_lessons
-    JOIN lessons ON lessons.lesson_id = recommended_lessons.lesson_id
-    WHERE recommended_lessons.group_id = ?
-  `, [ activeGroupId ]);
+  const { activeGroupId, activeGroupName } = R.head(
+    await query(`
+      SELECT
+        user_group.group_id AS activeGroupId,
+        groups.name AS activeGroupName
+      FROM user_group
+      JOIN groups ON groups.group_id = user_group.group_id
+      WHERE user_group_id = ?
+    `, mappingId));
 
-  res.json(lessons);
+
+  res.json(await query(`
+    SELECT
+      lessons.lesson_id AS lessonId,
+      title,
+      (SELECT COUNT(1) != 0 FROM recommended_lessons WHERE recommended_lessons.lesson_id = lessonId AND recommended_lessons.group_id = ?) AS isRecommended
+    FROM lessons
+  `, activeGroupId));
 });
 
 /**
@@ -98,7 +109,20 @@ router.delete("/:lessonId", jwtFilter, async (req, res) => {
  */
 
 router.get("/:lessonId/toggle", jwtFilter, async (req, res) => {
-  const activeGroupId = R.prop(R.head(await query("SELECT active_group FROM users WHERE user_id = ?", userId)), "active_group");
+  const { userId } = req.decodedToken;
+
+  const mappingId = R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)).activeGroup;
+
+  const { activeGroupId, activeGroupName } = R.head(
+    await query(`
+      SELECT
+        user_group.group_id AS activeGroupId,
+        groups.name AS activeGroupName
+      FROM user_group
+      JOIN groups ON groups.group_id = user_group.group_id
+      WHERE user_group_id = ?
+    `, mappingId));
+
   const { lessonId } = req.params;
 
   const lesson = R.head(await query("SELECT * FROM recommended_lessons WHERE group_id = ? AND lesson_id = ?",

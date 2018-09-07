@@ -132,6 +132,16 @@ CREATE TABLE `recommended_lessons` (
 	`lesson_id` INT NOT NULL
 );
 
+CREATE TABLE `lesson_uploads` (
+	`lesson_upload_id` INT NOT NULL AUTO_INCREMENT,
+	`lesson_id` INT NOT NULL,
+	`filename` varchar(200) NOT NULL,
+  `original_filename` varchar(200) NOT NULL,
+  `mime_type` varchar(50) NOT NULL,
+  `file_hash` varchar(100) NOT NULL,
+	PRIMARY KEY (`lesson_upload_id`)
+);
+
 ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
 
 ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
@@ -173,3 +183,5 @@ ALTER TABLE `invitation_codes` ADD CONSTRAINT `invitation_codes_fk0` FOREIGN KEY
 ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
 ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
+
+ALTER TABLE `lesson_uploads` ADD CONSTRAINT `lesson_uploads_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);

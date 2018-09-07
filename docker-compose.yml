@@ -18,4 +18,5 @@ services:
      - JWT_SECRET=uBqETJWeedLXFb4MY5KYV2Z8ecVSCxxC
     volumes:
       - ".:/src/app"
+      - /home/andrei/docker/uploads:/usr/src/uploads
     restart: always

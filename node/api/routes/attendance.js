@@ -43,7 +43,7 @@ router.get("/users/:attendanceId", async (req, res) => {
           WHERE attendance_users.user_id = userId AND attendance_id = ?) AS isPresent
       FROM users
       JOIN user_group ON user_group.user_id = users.user_id
-      WHERE group_id = ?
+      WHERE group_id = ? AND users.privilege = 0
     `, [ attendanceId, groupId]);
 
     res.json(users);
@@ -131,7 +131,13 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
  */
 router.get("/:groupId", async (req, res) => {
   const { groupId } = req.params;
-  const attendanceList = await query("SELECT attendance_id AS attendanceId, date FROM attendance WHERE group_id = ?", groupId);
+  const attendanceList = await query(`
+    SELECT
+      attendance_id AS attendanceId,
+      DATE_FORMAT(date, "%d/%m/%Y") AS date
+    FROM attendance
+    WHERE group_id = ?
+  `, groupId);
   res.json(attendanceList);
 });
 

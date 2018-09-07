@@ -1,4 +1,3 @@
-//TODO: re-test everything
 const express = require("express");
 const R = require("ramda");
 
@@ -34,7 +33,8 @@ const teacherFilter = privilegeFilter(1);
  *   ]
  */
 router.get("/", jwtFilter, teacherFilter, async (req, res) => {
-  res.json(await query("SELECT name, description, group_id as groupId FROM groups"));
+  const groupList = await query("SELECT name, description, group_id as groupId FROM groups WHERE deleted = 0");
+  res.json(groupList);
 });
 
 /**
@@ -91,6 +91,19 @@ router.post("/:groupId/:userId", jwtFilter, async (req, res) => {
   res.json({ succes: true });
 });
 
+router.get("/:groupId/:userId/toggle", jwtFilter, async (req, res) => {
+  const { groupId, userId } = req.params;
+  const existsInGroup = R.head(await query("SELECT 1 FROM user_group WHERE user_id = ? AND group_id = ?", [ userId, groupId ]));
+
+  if (R.isNil(existsInGroup)) {
+    await query("INSERT INTO user_group (user_id, group_id) VALUES (?, ?)", [ userId, groupId ]);
+  } else {
+    await query("DELETE FROM user_group WHERE user_id = ? AND group_id = ?", [ userId, groupId ]);
+  }
+
+  res.json({ success: true });
+});
+
 /**
  * @api {get} /groups/my Get groups for the current user
  * @apiName GetCurrentGroups
@@ -120,7 +133,7 @@ router.get("/my", jwtFilter, async (req, res) => {
         name
       FROM user_group
       JOIN groups ON groups.group_id = user_group.group_id
-      WHERE user_group.user_id = ?
+      WHERE user_group.user_id = ? AND groups.deleted = 0
     `, userId);
     res.json(groups);
 
@@ -132,6 +145,7 @@ router.get("/my", jwtFilter, async (req, res) => {
         group_id AS groupId,
         name
       FROM groups
+      WHERE groups.deleted = 0
     `, userId);
     res.json(groups);
   }
@@ -166,8 +180,8 @@ router.get("/:groupId", jwtFilter, async (req, res) => {
   const groupObject = R.head(await query(`
     SELECT
       group_id AS groupId,
-      start_date AS startDate,
-      end_date AS endDate,
+      DATE_FORMAT(start_date, "%d/%m/%Y") AS startDate,
+      DATE_FORMAT(end_date, "%d/%m/%Y") AS endDate,
       name,
       description
     FROM groups
@@ -187,6 +201,44 @@ router.get("/:groupId", jwtFilter, async (req, res) => {
     groupData: groupObject,
     users: userNames
   });
+});
+
+/**
+ * @api {get} /groups/:groupId/all-users Get all users that are in the group or not
+ * @apiName GetAllUsers
+ * @apiGroup Groups
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiParam {String} groupId The group id
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * [{
+ *    userId: ...,
+ *    name: ...,
+ *    inGroup: ...
+ * },...]
+ */
+router.get("/:groupId/all-users", jwtFilter, async (req, res) => {
+  const { groupId } = req.params;
+
+  if (R.isNil(groupId)) {
+    return res.status(400);
+  }
+
+  const groupName = R.prop("groupName", R.head(await query("SELECT name AS groupName FROM groups WHERE group_id = ?", groupId)));
+
+  const userList = await query(`
+    SELECT
+      user_id AS userId,
+      name,
+      (SELECT COUNT(1) != 0 FROM user_group WHERE user_group.user_id = userId AND user_group.group_id = ?) AS inGroup
+    FROM users
+    WHERE users.privilege = 0
+  `, groupId);
+
+  res.json({ userList, groupName });
 });
 
 /**
