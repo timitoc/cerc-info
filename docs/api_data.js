@@ -202,6 +202,120 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/lesson-comments",
+    "title": "Add comment to lesson",
+    "name": "AddCommentToLesson",
+    "group": "Comments",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"lessonId\": 7, \n  \"content\": \"This is a comment :)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/lesson-comments.js",
+    "groupTitle": "Comments"
+  },
+  {
+    "type": "delete",
+    "url": "/lesson-comments/:commentId",
+    "title": "Delete comment",
+    "name": "DeleteComment",
+    "group": "Comments",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/lesson-comments.js",
+    "groupTitle": "Comments"
+  },
+  {
+    "type": "put",
+    "url": "/lesson-comments/:commentId",
+    "title": "Edit comment",
+    "name": "EditComment",
+    "group": "Comments",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"content\": \"This is an edited comment\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/lesson-comments.js",
+    "groupTitle": "Comments"
+  },
+  {
+    "type": "post",
     "url": "/groups",
     "title": "Add a new group",
     "name": "AddGroup",
@@ -1011,7 +1125,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"title\": \"Lectia 2\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"authorName\": \"John Smith\"\n  \"tags\": [..],\n  \"isRecommended\": false\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"title\": \"Lectia 2\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"authorName\": \"John Smith\"\n  \"tags\": [..],\n  \"comments\": [..],\n  \"isRecommended\": false\n}",
           "type": "json"
         }
       ]

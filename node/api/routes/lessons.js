@@ -121,6 +121,7 @@ router.get("/", jwtFilter, async (req, res) => {
  *   "authorId": 2,
  *   "authorName": "John Smith"
  *   "tags": [..],
+ *   "comments": [..],
  *   "isRecommended": false
  * }
  */
@@ -166,8 +167,19 @@ router.get("/:lessonId", jwtFilter, async (req, res) => {
     WHERE lesson_id = ?
   `, [lessonId]);
 
+  const lessonComments = await query(`
+    SELECT
+      content,
+      users.user_id AS userId,
+      comment_id AS commentId
+      name
+    FROM lesson_comments
+    JOIN users ON users.user_id = lesson_comments.user_id
+    WHERE lesson_id = ?
+  `, lessonId);
+
     
-  res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads }));
+  res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads , comments: lessonComments }));
 });
 
 /**

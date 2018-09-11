@@ -58,6 +58,7 @@ CREATE TABLE `lesson_comments` (
 	`comment_id` INT NOT NULL AUTO_INCREMENT,
 	`lesson_id` INT NOT NULL,
 	`user_id` INT NOT NULL,
+  `content` VARCHAR(500) NOT NULL,
 	PRIMARY KEY (`comment_id`)
 );
 
