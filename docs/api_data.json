@@ -632,6 +632,70 @@
     "groupTitle": "Homework"
   },
   {
+    "type": "put",
+    "url": "/homework/:homeworkId",
+    "title": "Modify homework",
+    "name": "ChangeHomeworkById",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "Same as POST\nHTTP 200 OK\n{ success: true }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
+    "type": "delete",
+    "url": "/homework/:homeworkId",
+    "title": "Delete homework by id",
+    "name": "DeleteHomeworkById",
+    "group": "Homework",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{ success: true }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/homework.js",
+    "groupTitle": "Homework"
+  },
+  {
     "type": "delete",
     "url": "/homework/task/:taskId",
     "title": "Delete task from homework",

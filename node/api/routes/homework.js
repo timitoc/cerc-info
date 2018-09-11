@@ -56,8 +56,8 @@ router.post("/", jwtFilter, async (req, res) => {
 
   const { tasks } = req.body;
 
-  await query("INSERT INTO tasks (homework_id, content, type) VALUES (?, ?, ?)",
-    R.map(item => [insertId, R.prop("content", item), R.prop("type", item)], tasks));
+  await query("INSERT INTO tasks (homework_id, content, type) VALUES ?",
+    [R.map(item => [insertId, R.prop("content", item), R.prop("type", item)], tasks)]);
 
   res.json({ success: true, homeworkId: insertId });
 });
@@ -180,6 +180,79 @@ router.get("/:homeworkId", jwtFilter, async (req, res) => {
 
   const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags) });
   res.json(response);
+});
+
+/**
+  * @api {delete} /homework/:homeworkId Delete homework by id
+  * @apiName DeleteHomeworkById
+  * @apiGroup Homework
+  *
+  * @apiHeader {String} Authorization Bearer [jwt]
+
+  * @apiSuccessExample {json} Success response:
+  * HTTP 200 OK
+  * { success: true }
+*/
+router.delete("/:homeworkId", jwtFilter, async (req, res) => {
+  const { homeworkId } = req.params;
+
+  await query("DELETE FROM tasks WHERE homework_id = ?", homeworkId);
+  await query("DELETE FROM homework WHERE homework_id = ?", homeworkId);
+
+  res.json({ success: true });
+});
+
+/**
+  * @api {put} /homework/:homeworkId Modify homework
+  * @apiName ChangeHomeworkById
+  * @apiGroup Homework
+  *
+  * @apiHeader {String} Authorization Bearer [jwt]
+  *
+  * @apiParamExample {json} Request example:
+  * Same as POST
+  * HTTP 200 OK
+  * { success: true }
+*/
+router.put("/:homeworkId", jwtFilter, async (req, res) => {
+  const { homeworkId } = req.params;
+
+  await query("DELETE FROM tasks WHERE homework_id = ?", homeworkId);
+  await query("DELETE FROM homework WHERE homework_id = ?", homeworkId);
+
+  const { userId } = req.decodedToken;
+  const { description, title, tags } = req.body;
+
+  const activeGroupMappingId = R.path(["activeGroup"],
+    R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
+
+  const activeGroupId = R.path(["groupId"],
+    R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
+
+  if (R.isNil(activeGroupId)) {
+    return res.status(500).json({ error: "Active group not found !" });
+  }
+
+  const queryResult = await query(`
+    INSERT INTO homework
+      (homework_id, group_id, title, description, tags)
+    VALUES (?, ?, ?, ?, ?)`,
+
+    Array.of(
+      homeworkId,
+      activeGroupId,
+      title,
+      description,
+      R.join(",", tags)));
+
+  const { insertId } = queryResult;
+
+  const { tasks } = req.body;
+
+  await query("INSERT INTO tasks (homework_id, content, type) VALUES ?",
+    [R.map(item => [insertId, R.prop("content", item), R.prop("type", item)], tasks)]);
+
+  res.json({ success: true });
 });
 
 module.exports = router;

@@ -2,7 +2,6 @@ const mysql = require("mysql");
 const util = require("util");
 const fs = require("fs");
 
-//require("dotenv").config();
 fs.readdirSync("./env")
   .forEach(file => process.env[file.replace(".env", "")] =  fs.readFileSync(`./env/${file}`, 'utf-8').trim());
 
@@ -62,6 +61,7 @@ const lessonRoutes = require("./api/routes/lessons.js");
 const recommendedLessonsRoutes = require("./api/routes/recommended-lessons.js");
 const dashboardRoutes = require("./api/routes/dashboard.js");
 const attendanceRoutes = require("./api/routes/attendance.js");
+const homeworkRoute = require("./api/routes/homework.js");
 
 // Load API routes
 const apiRouter = express.Router();
@@ -75,6 +75,7 @@ apiRouter.use("/lessons", lessonRoutes);
 apiRouter.use("/recommended-lessons", recommendedLessonsRoutes);
 apiRouter.use("/dashboard", dashboardRoutes);
 apiRouter.use("/attendance", attendanceRoutes);
+apiRouter.use("/homework", homeworkRoute);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);
