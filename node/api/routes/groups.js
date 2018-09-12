@@ -129,7 +129,7 @@ router.get("/my", jwtFilter, async (req, res) => {
 
     const groups = await query(`
       SELECT
-        group_id AS groupId,
+        groups.group_id AS groupId,
         name
       FROM user_group
       JOIN groups ON groups.group_id = user_group.group_id

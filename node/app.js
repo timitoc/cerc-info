@@ -62,6 +62,8 @@ const recommendedLessonsRoutes = require("./api/routes/recommended-lessons.js");
 const dashboardRoutes = require("./api/routes/dashboard.js");
 const attendanceRoutes = require("./api/routes/attendance.js");
 const homeworkRoute = require("./api/routes/homework.js");
+const lessonCommentsRoutes = require("./api/routes/lesson-comments.js");
+const submitRoutes = require("./api/routes/submit.js");
 
 // Load API routes
 const apiRouter = express.Router();
@@ -76,6 +78,8 @@ apiRouter.use("/recommended-lessons", recommendedLessonsRoutes);
 apiRouter.use("/dashboard", dashboardRoutes);
 apiRouter.use("/attendance", attendanceRoutes);
 apiRouter.use("/homework", homeworkRoute);
+apiRouter.use("/lesson-comments", lessonCommentsRoutes);
+apiRouter.use("/submit", submitRoutes);
 
 // Add API routes to the main application
 app.use("/api", apiRouter);

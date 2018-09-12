@@ -23,15 +23,50 @@ const router = express.Router();
  *
  * @apiSuccessExample {json} Success response:
  * HTTP 200 OK
- * {
- *   success: true
- * }
+ * { success: true }
  */
 router.post("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const { lessonId, content } = req.body;
-  await query("INSERT INTO lesson_comments (lesson_id, content, user_id) VALUES (?, ?, ?)", 
-    Array.of(lessonId, content, userId));
+
+  await query(`
+    INSERT INTO lesson_comments (lesson_id, content, user_id, reply_to, date)
+    VALUES (?, ?, ?, NULL, ?)`, 
+    Array.of(lessonId, content, userId, new Date()));
+
+  res.json({ success: true });
+});
+
+/**
+ * @api {post} /lesson-comments/reply Add reply to comment
+ * @apiName AddReplyToComment
+ * @apiGroup Comments
+ *
+ * @apiHeader {String} Authorization Bearer [jwt]
+ *
+ * @apiParamExample {json} Request example:
+ * {
+ *   "commentId": 7, 
+ *   "content": "This is a reply :)"
+ * }
+ *
+ * @apiSuccessExample {json} Success response:
+ * HTTP 200 OK
+ * { success: true }
+ */
+router.post("/reply", jwtFilter, async (req, res) => {
+  const { userId } = req.decodedToken;
+  const { commentId, content } = req.body;
+
+  console.log("commentId", commentId);
+
+  const { lessonId } = R.head(await query("SELECT lesson_id AS lessonId FROM lesson_comments WHERE comment_id = ?", commentId));
+
+  await query(`
+    INSERT INTO lesson_comments (lesson_id, content, user_id, reply_to, date)
+    VALUES (?, ?, ?, ?, ?) `, 
+    Array.of(lessonId, content, userId, commentId, new Date()));
+
   res.json({ success: true });
 });
 
@@ -56,7 +91,7 @@ router.post("/", jwtFilter, async (req, res) => {
 router.put("/:commentId", jwtFilter, async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
-  await query("UPDATE lesson_comments SET content = ? WHERE comment_id = ?", [ content, commentId ]);
+  await query("UPDATE  SET content = ? WHERE comment_id = ?", [ content, commentId ]);
   res.json({ success: true });
 });
 
@@ -75,6 +110,7 @@ router.put("/:commentId", jwtFilter, async (req, res) => {
  */
 router.delete("/:commentId", jwtFilter, async (req, res) => {
   const { commentId } = req.params;
+  await query("DELETE FROM lesson_comments WHERE reply_to = ?", commentId);
   await query("DELETE FROM lesson_comments WHERE comment_id = ?", commentId);
   res.json({ success: true });
 });

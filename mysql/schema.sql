@@ -54,28 +54,6 @@ INSERT INTO user_group (user_id, group_id) VALUES
 	(5, 3),
 	(6, 1);
 
-CREATE TABLE `lesson_comments` (
-	`comment_id` INT NOT NULL AUTO_INCREMENT,
-	`lesson_id` INT NOT NULL,
-	`user_id` INT NOT NULL,
-  `content` VARCHAR(500) NOT NULL,
-	PRIMARY KEY (`comment_id`)
-);
-
-CREATE TABLE `questions` (
-	`question_id` INT NOT NULL AUTO_INCREMENT,
-	`lesson_id` INT NOT NULL,
-	`user_id` INT NOT NULL,
-	PRIMARY KEY (`question_id`)
-);
-
-CREATE TABLE `answers` (
-	`answer_id` INT NOT NULL AUTO_INCREMENT,
-	`question_id` INT NOT NULL,
-	`user_id` INT NOT NULL,
-	PRIMARY KEY (`answer_id`)
-);
-
 CREATE TABLE `attendance` (
 	`attendance_id` INT NOT NULL AUTO_INCREMENT,
 	`group_id` INT NOT NULL,
@@ -115,7 +93,17 @@ CREATE TABLE `submit` (
 CREATE TABLE `submit_task` (
 	`submit_id` INT NOT NULL,
 	`task_id` INT NOT NULL,
-	`content` TEXT NOT NULL
+	`link` TEXT,
+  `upload_id` INT
+);
+
+CREATE TABLE `submit_uploads` (
+	`submit_upload_id` INT NOT NULL AUTO_INCREMENT,
+	`filename` varchar(200) NOT NULL,
+  `original_filename` varchar(200) NOT NULL,
+  `mime_type` varchar(200) NOT NULL,
+  `file_hash` varchar(100) NOT NULL,
+	PRIMARY KEY (`submit_upload_id`)
 );
 
 CREATE TABLE `invitation_codes` (
@@ -138,9 +126,29 @@ CREATE TABLE `lesson_uploads` (
 	`lesson_id` INT NOT NULL,
 	`filename` varchar(200) NOT NULL,
   `original_filename` varchar(200) NOT NULL,
-  `mime_type` varchar(50) NOT NULL,
+  `mime_type` varchar(200) NOT NULL,
   `file_hash` varchar(100) NOT NULL,
 	PRIMARY KEY (`lesson_upload_id`)
+);
+
+CREATE TABLE `lesson_comments` (
+	`comment_id` INT NOT NULL AUTO_INCREMENT,
+	`lesson_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	`content` varchar(500) NOT NULL,
+	`reply_to` INT,
+  `date` DATETIME NOT NULL,
+	PRIMARY KEY (`comment_id`)
+);
+
+CREATE TABLE `homework_comments` (
+	`comment_id` INT NOT NULL AUTO_INCREMENT,
+	`homework_id` INT NOT NULL,
+	`user_id` INT NOT NULL,
+	`content` varchar(500) NOT NULL,
+	`reply_to` INT,
+  `date` DATETIME NOT NULL,
+	PRIMARY KEY (`comment_id`)
 );
 
 ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REFERENCES `users`(`user_id`);
@@ -148,18 +156,6 @@ ALTER TABLE `lessons` ADD CONSTRAINT `lessons_fk0` FOREIGN KEY (`author_id`) REF
 ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
 ALTER TABLE `user_group` ADD CONSTRAINT `user_group_fk1` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
-
-ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
-
-ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
-
-ALTER TABLE `questions` ADD CONSTRAINT `questions_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
-
-ALTER TABLE `questions` ADD CONSTRAINT `questions_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
-
-ALTER TABLE `answers` ADD CONSTRAINT `answers_fk0` FOREIGN KEY (`question_id`) REFERENCES `questions`(`question_id`);
-
-ALTER TABLE `answers` ADD CONSTRAINT `answers_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
 
 ALTER TABLE `attendance` ADD CONSTRAINT `attendance_fk0` FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`);
 
@@ -186,3 +182,17 @@ ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk0` FOREI
 ALTER TABLE `recommended_lessons` ADD CONSTRAINT `recommended_lessons_fk1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
 
 ALTER TABLE `lesson_uploads` ADD CONSTRAINT `lesson_uploads_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
+
+ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk0` FOREIGN KEY (`lesson_id`) REFERENCES `lessons`(`lesson_id`);
+
+ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
+
+ALTER TABLE `lesson_comments` ADD CONSTRAINT `lesson_comments_fk2` FOREIGN KEY (`reply_to`) REFERENCES `lesson_comments`(`comment_id`);
+
+ALTER TABLE `homework_comments` ADD CONSTRAINT `homework_comments_fk0` FOREIGN KEY (`homework_id`) REFERENCES `homework`(`homework_id`);
+
+ALTER TABLE `homework_comments` ADD CONSTRAINT `homework_comments_fk1` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`);
+
+ALTER TABLE `homework_comments` ADD CONSTRAINT `homework_comments_fk2` FOREIGN KEY (`reply_to`) REFERENCES `homework_comments`(`comment_id`);
+
+ALTER TABLE `submit_task` ADD CONSTRAINT `submit_task_fk2` FOREIGN KEY (`upload_id`) REFERENCES `submit_uploads`(`submit_upload_id`);

@@ -7,6 +7,8 @@ const randomstring = require("randomstring");
 const mysql = require("mysql");
 const sha1 = require('node-sha1');
 
+const timeAgo = require('node-time-ago-ro');
+
 const fileUpload = require('express-fileupload');
 const serveIndex = require('serve-index');
 
@@ -17,7 +19,6 @@ const router = express.Router();
 
 router.use(fileUpload());
 //router.use('/list', express.static('/'), serveIndex('/', {'icons': true}))
-
 
 router.get("/download/:fileName", async (req, res) => {
   const { fileName } = req.params;
@@ -121,7 +122,15 @@ router.get("/", jwtFilter, async (req, res) => {
  *   "authorId": 2,
  *   "authorName": "John Smith"
  *   "tags": [..],
- *   "comments": [..],
+ *   "comments": [{
+ *     "name": ...,
+ *     "userId": ...,
+ *     "commentId": ...,
+ *     "content": ...,
+ *     "replies": [
+ *       // same structure as comment
+ *     ]
+ *   }, ...],
  *   "isRecommended": false
  * }
  */
@@ -167,19 +176,83 @@ router.get("/:lessonId", jwtFilter, async (req, res) => {
     WHERE lesson_id = ?
   `, [lessonId]);
 
+  //const lessonComments = R.map(async comment => {
+  //  const { commentId } = comment;
+  //  const replies = R.map(async reply => {
+  //    return R.merge(reply, { dateAgo: timeAgo(reply.date) }); 
+  //  },
+  //  await(`
+  //    SELECT
+  //      comment_id AS commentId,
+  //      lesson_id AS lessonId,
+  //      users.user_id AS userId,
+  //      name,
+  //      content,
+  //      date
+  //    JOIN users ON users.user_id = lesson_comments.user_id
+  //    WHERE lesson_id = ? AND reply_to = ?
+  //  `, Array.of(lessonId, commentId)));
+  //  return R.merge(comment, { replies });
+  //}, R.map(async comment => {
+  //  return R.merge(comment, { dateAgo: timeAgo(comment.date) }); 
+  //}, await query(`
+  //  SELECT
+  //    comment_id AS commentId,
+  //    lesson_id AS lessonId,
+  //    users.user_id AS userId,
+  //    name,
+  //    content,
+  //    date
+  //  FROM lesson_comments
+  //  JOIN users ON users.user_id = lesson_comments.user_id
+  //  WHERE lesson_id = ? AND reply_to IS NULL
+  //`, Array.of(lessonId))));
+
+  //res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads , comments: lessonComments }));
+
   const lessonComments = await query(`
     SELECT
-      content,
+      comment_id AS commentId,
+      lesson_id AS lessonId,
       users.user_id AS userId,
-      comment_id AS commentId
-      name
+      name,
+      content,
+      date
     FROM lesson_comments
     JOIN users ON users.user_id = lesson_comments.user_id
-    WHERE lesson_id = ?
+    WHERE lesson_id = ? AND reply_to IS NULL
   `, lessonId);
 
-    
-  res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads , comments: lessonComments }));
+  String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
+  const lessonCommentsWithReplies = await Promise.all(R.map( async (comment) => {
+    const replies = await query(`
+     SELECT
+       comment_id AS commentId,
+       lesson_id AS lessonId,
+       users.user_id AS userId,
+       name,
+       content,
+       date
+     FROM lesson_comments
+     JOIN users ON users.user_id = lesson_comments.user_id
+     WHERE reply_to = ?
+   `, R.prop("commentId", comment));
+
+    return R.merge(comment, { replies });
+  } , lessonComments));
+
+  const lessonCommentsWithRepliesAndAgo = R.map(comment => {
+    const agoReplies = R.map(reply => {
+      return R.merge(reply, { dateAgo: timeAgo(R.prop("date", reply)).capitalize() });
+    }, comment.replies);
+
+    return R.merge(comment, { replies: agoReplies, dateAgo: timeAgo(R.prop("date", comment)).capitalize() });
+  }, lessonCommentsWithReplies);
+  
+  res.json(R.merge(lessonSplittedTags, { uploads: lessonUploads , comments: lessonCommentsWithRepliesAndAgo }));
 });
 
 /**
@@ -362,6 +435,9 @@ router.put("/:lessonId", async (req, res) => {
 router.delete("/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
 
+  await query("DELETE FROM recommended_lessons WHERE lesson_id = ?", lessonId);
+  await query("DELETE FROM lesson_uploads WHERE lesson_id = ?", lessonId);
+  await query("DELETE FROM lesson_comments WHERE lesson_id = ?", lessonId);
   await query("DELETE FROM lessons WHERE lesson_id = ?", lessonId);
   res.status(201).json({ success: true });
 });

@@ -232,7 +232,48 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  success: true\n}",
+          "content": "HTTP 200 OK\n{ success: true }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "api/routes/lesson-comments.js",
+    "groupTitle": "Comments"
+  },
+  {
+    "type": "post",
+    "url": "/lesson-comments/reply",
+    "title": "Add reply to comment",
+    "name": "AddReplyToComment",
+    "group": "Comments",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Authorization",
+            "description": "<p>Bearer [jwt]</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "{\n  \"commentId\": 7, \n  \"content\": \"This is a reply :)\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTP 200 OK\n{ success: true }",
           "type": "json"
         }
       ]
@@ -1125,7 +1166,7 @@
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"title\": \"Lectia 2\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"authorName\": \"John Smith\"\n  \"tags\": [..],\n  \"comments\": [..],\n  \"isRecommended\": false\n}",
+          "content": "HTTP 200 OK\n{\n  \"lessonId\": 2,\n  \"title\": \"Lectia 2\",\n  \"content\": \"Continutul lectiei\",\n  \"authorId\": 2,\n  \"authorName\": \"John Smith\"\n  \"tags\": [..],\n  \"comments\": [{\n    \"name\": ...,\n    \"userId\": ...,\n    \"commentId\": ...,\n    \"content\": ...,\n    \"replies\": [\n      // same structure as comment\n    ]\n  }, ...],\n  \"isRecommended\": false\n}",
           "type": "json"
         }
       ]
