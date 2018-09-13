@@ -35,10 +35,17 @@ const router = express.Router();
  */
 router.post("/", jwtFilter, adminFilter, async (req, res) => {
   const { email, groupId, type } = req.body;
-  console.log(type);
   const codeValue = randomstring.generate(5).toUpperCase();
+
+  if (!R.isEmpty(R.head(await query("SELECT 1 FROM invitation_codes WHERE email = ?", email)))) {
+    return res.json({
+      succes: false,
+      error: "Adresa de e-mail a fost deja folosită!"
+    });
+  }
+
   const { insertId } = await query("INSERT INTO invitation_codes (code, group_id, privilege, email) VALUES (?, ?, ?, ?)",
-    [ codeValue, groupId, type == "teacher" ? 1 : 2, email ]);
+    [ codeValue, groupId, type == "teacher" ? 1 : 0, email ]);
 
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_SMTP_SERVER,

@@ -169,6 +169,7 @@ router.delete("/task/:taskId", jwtFilter, async (req, res) => {
 */
 router.get("/:homeworkId", jwtFilter, async (req, res) => {
   const { homeworkId } = req.params;
+  const { userId } = req.decodedToken;
 
   const homework = R.head(await query(`
     SELECT homework_id AS homeworkId, group_id AS groupId, title, description, tags FROM homework WHERE homework_id = ?`
@@ -178,8 +179,39 @@ router.get("/:homeworkId", jwtFilter, async (req, res) => {
     SELECT task_id AS taskId, type, content FROM tasks WHERE homework_id = ?
   `, homeworkId);
 
-  const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags) });
-  res.json(response);
+  const submit = R.head(await query(`
+    SELECT submit_id AS submitId FROM submit WHERE homework_id = ?
+  `, homeworkId));
+
+  if (R.isNil(submit)) {
+    const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Netrimis" });
+    return res.json(response);
+  }
+  const { submitId } = submit;
+
+  const submittedTasks = await query(`
+    SELECT task_id AS taskId FROM submit_task WHERE submit_id = ?
+  `, submitId);
+
+  const submittedTaskIds = R.map(item => R.prop("taskId", item), submittedTasks);
+  const taskIds = R.map(item => R.prop("taskId", item), taskList);
+
+  const unsubmittedTaskIds = R.difference(taskIds, submittedTaskIds);
+
+  if (unsubmittedTaskIds.length == taskIds.length) {
+    const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Netrimis" });
+    return res.json(response);
+  }
+
+  if (R.isEmpty(unsubmittedTaskIds)) {
+    const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Complet" });
+    res.json(response);
+  } else {
+    const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Parţial" });
+    res.json(response);
+  }
+  
+
 });
 
 /**
