@@ -18,6 +18,8 @@ router.post("/:homeworkId", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const submitData = JSON.parse(R.prop("submitData", req.body));
 
+  //TODO: do not create new submit if there is an existing one
+
   const submitId = R.prop("insertId", await query("INSERT INTO submit (homework_id, user_id) VALUES (?, ?)", [ homeworkId, userId ]));
 
   const { uploads } = req.files;

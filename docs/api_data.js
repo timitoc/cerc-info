@@ -42,7 +42,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/attendance/:groupId/:date",
+    "url": "/attendance/:date",
     "title": "Add attendance",
     "name": "AddAttendance",
     "group": "Attdendance",
@@ -106,8 +106,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/attendance/:groupId",
-    "title": "Get all attendances from group",
+    "url": "/attendance",
+    "title": "Get all attendances from active group",
     "name": "GetAllAtendances",
     "group": "Attdendance",
     "header": {
@@ -127,7 +127,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success response:",
-          "content": "HTTP 200 OK\n[{\n   attendanceId: 3,\n   date: \"...\"\n},{\n...\n}]",
+          "content": "HTTP 200 OK\n[{\n   attendanceId: 3,\n   date: \"...\",\n   isPresent: true/false\n},{\n...\n}]",
           "type": "json"
         }
       ]

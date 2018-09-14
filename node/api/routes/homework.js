@@ -97,7 +97,51 @@ router.get("/", jwtFilter, async (req, res) => {
 
   const homeworkListSplittedTags = R.map(item => R.merge(item, { tags: R.split(",", item.tags )}), homeworkList);
 
-  res.json(homeworkListSplittedTags);
+  const homeworkListWithStatus = await Promise.all(R.map(async (homework) => {
+
+    const { homeworkId } = homework;
+
+    const taskList = await query(`
+      SELECT task_id AS taskId, type, content FROM tasks WHERE homework_id = ?
+    `, homeworkId);
+
+    const submit = R.head(await query(`
+      SELECT submit_id AS submitId FROM submit WHERE homework_id = ?
+    `, homeworkId));
+
+    if (R.isNil(submit)) {
+      return R.merge(homework, { status: "Netrimis" });
+    }
+    const { submitId } = submit;
+
+    const submittedTasks = await query(`
+    SELECT task_id AS taskId FROM submit_task WHERE submit_id = ?
+  `, submitId);
+
+    const submittedTaskIds = R.map(item => R.prop("taskId", item), submittedTasks);
+    const taskIds = R.map(item => R.prop("taskId", item), taskList);
+
+    const unsubmittedTaskIds = R.difference(taskIds, submittedTaskIds);
+
+    console.log(taskIds)
+    console.log(submittedTaskIds)
+    console.log(unsubmittedTaskIds)
+
+    if (unsubmittedTaskIds.length == taskIds.length) {
+      return R.merge(homework, { status: "Netrimis" });
+    }
+
+    if (R.isEmpty(unsubmittedTaskIds)) {
+      return R.merge(homework, { status: "Complet" });
+    } else {
+      return R.merge(homework, { status: "Parţial" });
+    }
+
+  }, homeworkListSplittedTags));
+
+  console.log(homeworkListWithStatus);
+
+  res.json(homeworkListWithStatus);
 });
 
 /**
@@ -197,6 +241,9 @@ router.get("/:homeworkId", jwtFilter, async (req, res) => {
   const taskIds = R.map(item => R.prop("taskId", item), taskList);
 
   const unsubmittedTaskIds = R.difference(taskIds, submittedTaskIds);
+    console.log(taskIds)
+    console.log(submittedTaskIds)
+    console.log(unsubmittedTaskIds)
 
   if (unsubmittedTaskIds.length == taskIds.length) {
     const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Netrimis" });

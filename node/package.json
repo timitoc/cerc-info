@@ -22,6 +22,7 @@
     "mysql": "^2.16.0",
     "node-sha1": "^1.0.1",
     "node-time-ago-ro": "^1.0.0",
+    "node-xlsx": "^0.12.1",
     "nodemailer": "^4.6.7",
     "ramda": "^0.25.0",
     "randomstring": "^1.1.5",

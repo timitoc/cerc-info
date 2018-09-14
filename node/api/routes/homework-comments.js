@@ -9,57 +9,57 @@ const jwtFilter = require("../filters/jwt-filter.js");
 
 const router = express.Router();
 
-router.get("/:lessonId", async (req, res) => {
+router.get("/:homeworkId", async (req, res) => {
 
-  const { lessonId } = req.params;
+  const { homeworkId } = req.params;
 
-  const lessonComments = await query(`
+  const homeworkComments = await query(`
     SELECT
       comment_id AS commentId,
-      lesson_id AS lessonId,
+      homework_id AS homeworkId,
       users.user_id AS userId,
       name,
       content,
       date
-    FROM lesson_comments
-    JOIN users ON users.user_id = lesson_comments.user_id
-    WHERE lesson_id = ? AND reply_to IS NULL
-  `, lessonId);
+    FROM homework_comments
+    JOIN users ON users.user_id = homework_comments.user_id
+    WHERE homework_id = ? AND reply_to IS NULL
+  `, homeworkId);
 
   String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
   }
 
-  const lessonCommentsWithReplies = await Promise.all(R.map( async (comment) => {
+  const homeworkCommentsWithReplies = await Promise.all(R.map( async (comment) => {
     const replies = await query(`
      SELECT
        comment_id AS commentId,
-       lesson_id AS lessonId,
+       homework_id AS homeworkId,
        users.user_id AS userId,
        name,
        content,
        date
-     FROM lesson_comments
-     JOIN users ON users.user_id = lesson_comments.user_id
+     FROM homework_comments
+     JOIN users ON users.user_id = homework_comments.user_id
      WHERE reply_to = ?
    `, R.prop("commentId", comment));
 
     return R.merge(comment, { replies });
-  } , lessonComments));
+  } , homeworkComments));
 
-  const lessonCommentsWithRepliesAndAgo = R.map(comment => {
+  const homeworkCommentsWithRepliesAndAgo = R.map(comment => {
     const agoReplies = R.map(reply => {
       return R.merge(reply, { dateAgo: timeAgo(R.prop("date", reply)).capitalize() });
     }, comment.replies);
 
     return R.merge(comment, { replies: agoReplies, dateAgo: timeAgo(R.prop("date", comment)).capitalize() });
-  }, lessonCommentsWithReplies);
+  }, homeworkCommentsWithReplies);
 
-  res.json(lessonCommentsWithRepliesAndAgo);
+  res.json(homeworkCommentsWithRepliesAndAgo);
 });
 
 /**
- * @api {post} /lesson-comments Add comment to lesson
+ * @api {post} /homework-comments Add comment to lesson
  * @apiName AddCommentToLesson
  * @apiGroup Comments
  *
@@ -67,7 +67,7 @@ router.get("/:lessonId", async (req, res) => {
  *
  * @apiParamExample {json} Request example:
  * {
- *   "lessonId": 7, 
+ *   "homeworkId": 7, 
  *   "content": "This is a comment :)"
  * }
  *
@@ -77,18 +77,18 @@ router.get("/:lessonId", async (req, res) => {
  */
 router.post("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
-  const { lessonId, content } = req.body;
+  const { homeworkId, content } = req.body;
 
   await query(`
-    INSERT INTO lesson_comments (lesson_id, content, user_id, reply_to, date)
+    INSERT INTO homework_comments (homework_id, content, user_id, reply_to, date)
     VALUES (?, ?, ?, NULL, ?)`, 
-    Array.of(lessonId, content, userId, new Date()));
+    Array.of(homeworkId, content, userId, new Date()));
 
   res.json({ success: true });
 });
 
 /**
- * @api {post} /lesson-comments/reply Add reply to comment
+ * @api {post} /homework-comments/reply Add reply to comment
  * @apiName AddReplyToComment
  * @apiGroup Comments
  *
@@ -108,20 +108,18 @@ router.post("/reply", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const { commentId, content } = req.body;
 
-  console.log("commentId", commentId);
-
-  const { lessonId } = R.head(await query("SELECT lesson_id AS lessonId FROM lesson_comments WHERE comment_id = ?", commentId));
+  const { homeworkId } = R.head(await query("SELECT homework_id AS homeworkId FROM homework_comments WHERE comment_id = ?", commentId));
 
   await query(`
-    INSERT INTO lesson_comments (lesson_id, content, user_id, reply_to, date)
+    INSERT INTO homework_comments (homework_id, content, user_id, reply_to, date)
     VALUES (?, ?, ?, ?, ?) `, 
-    Array.of(lessonId, content, userId, commentId, new Date()));
+    Array.of(homeworkId, content, userId, commentId, new Date()));
 
   res.json({ success: true });
 });
 
 /**
- * @api {put} /lesson-comments/:commentId Edit comment
+ * @api {put} /homework-comments/:commentId Edit comment
  * @apiName EditComment
  * @apiGroup Comments
  *
@@ -141,12 +139,12 @@ router.post("/reply", jwtFilter, async (req, res) => {
 router.put("/:commentId", jwtFilter, async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
-  await query("UPDATE lesson_comments SET content = ? WHERE comment_id = ?", [ content, commentId ]);
+  await query("UPDATE homework_comments SET content = ? WHERE comment_id = ?", [ content, commentId ]);
   res.json({ success: true });
 });
 
 /**
- * @api {delete} /lesson-comments/:commentId Delete comment
+ * @api {delete} /homework_comments/:commentId Delete comment
  * @apiName DeleteComment
  * @apiGroup Comments
  *
@@ -160,8 +158,8 @@ router.put("/:commentId", jwtFilter, async (req, res) => {
  */
 router.delete("/:commentId", jwtFilter, async (req, res) => {
   const { commentId } = req.params;
-  await query("DELETE FROM lesson_comments WHERE reply_to = ?", commentId);
-  await query("DELETE FROM lesson_comments WHERE comment_id = ?", commentId);
+  await query("DELETE FROM homework_comments WHERE reply_to = ?", commentId);
+  await query("DELETE FROM homework_comments WHERE comment_id = ?", commentId);
   res.json({ success: true });
 });
 

@@ -2,8 +2,6 @@ const express = require("express");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("jsonwebtoken");
 const R = require("ramda");
-const xlsx = require("node-xlsx").default;
-const snake = require("to-snake-case");
 
 const { query } = global;
 
@@ -169,7 +167,7 @@ router.get("/", jwtFilter, async (req, res) => {
     res.json(attendanceList);
 });
 
-router.get("/:attendanceId/stats", jwtFilter, async (req, res) => {
+router.get("/:attendanceId/table", jwtFilter, async (req, res) => {
   const { userId, privilege } = req.decodedToken;
   const { attendanceId } = req.params;
 
@@ -179,109 +177,30 @@ router.get("/:attendanceId/stats", jwtFilter, async (req, res) => {
   const activeGroupId = R.path(["groupId"],
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
-  const dateList = await query(`
-    SELECT
-      DATE_FORMAT(date, "%d/%m/%Y") AS date,
-      date AS originalDate
-    FROM attendance
-    WHERE group_id = ?
-  `, Array.of(activeGroupId));
-
-  const numberOfAttendances = R.length(dateList);
-
   const userList = await query(`
     SELECT 
       users.user_id AS userId,
       users.name
     FROM user_group
     JOIN users ON users.user_id = user_group.user_id
-    WHERE user_group.group_id = ? AND users.privilege = 0
+    WHERE user_group.group_id = ?
   `, Array.of(activeGroupId));
+
+  console.log(userList);
 
   const resultWithDates = await Promise.all(R.map(async (user) => {
     const { userId } = user;
-    const dates = R.map(item => R.prop("date", item), await query(`
+    const dates = await query(`
       SELECT
-        DATE_FORMAT(date, "%d/%m/%Y") AS date
+        DATE_FORMAT(date, "%d/%m/%Y") AS date,
       FROM attendance_users
       JOIN attendance ON attendance.attendance_id = attendance_users.attendance_id
       WHERE user_id = ?
-    `, Array.of(userId)));
+    `, Array.of(userId));
     return R.merge(user, { dates });
   }, userList));
 
-  const resultWithStatistics = R.map(user => {
-    const numberOfLessonsAttended = R.length(user.dates);
-    const stats = {
-      attended: numberOfLessonsAttended,
-      of: numberOfAttendances
-    };
-    return R.merge(user, { stats });
-  });
-
-  res.json(resultWithStatistics);
-});
-
-router.get("/:attendanceId/sheet", async (req, res) => {
-  const { attendanceId } = req.params;
-
-  const activeGroupId = R.path(["groupId"],
-    R.head(await query("SELECT group_id AS groupId FROM attendance WHERE attendance_id = ?", attendanceId)));
-
-  const activeGroupName = R.path(["name"],
-    R.head(await query("SELECT name FROM groups WHERE group_id = ?", activeGroupId)));
-
-  const userList = await query(`
-    SELECT 
-      users.user_id AS userId,
-      users.name
-    FROM user_group
-    JOIN users ON users.user_id = user_group.user_id
-    WHERE user_group.group_id = ? AND users.privilege = 0
-  `, Array.of(activeGroupId));
-
-  const dateList = await query(`
-    SELECT
-      DATE_FORMAT(date, "%d/%m/%Y") AS date,
-      date AS originalDate
-    FROM attendance
-    WHERE group_id = ?
-  `, Array.of(activeGroupId));
-
-  const dateFormattedList = R.map(item => R.prop("date", item), dateList);
-
-  const resultWithDates = await Promise.all(R.map(async (user) => {
-    const { userId } = user;
-    const dates = R.map(item => R.prop("date", item), await query(`
-      SELECT
-        DATE_FORMAT(date, "%d/%m/%Y") AS date
-      FROM attendance_users
-      JOIN attendance ON attendance.attendance_id = attendance_users.attendance_id
-      WHERE user_id = ?
-    `, Array.of(userId)));
-    return R.merge(user, { dates });
-  }, userList));
-
-  const sheetRows = R.map(user => {
-    const { dates, name } = user;
-
-    const columns = R.map(date => {
-      return R.indexOf(date, dates) != -1 ? 1 : 0;
-    } , dateFormattedList);
-
-    const rowWithName = R.prepend(name, columns);
-
-    return rowWithName;
-  }, resultWithDates);
-
-  const sheetHeader = R.prepend("", dateFormattedList);
-  const sheetData = R.prepend(sheetHeader, sheetRows);
-
-  const buffer = xlsx.build([{name: `Prezenţă ${activeGroupName}`, data: sheetData }]);
-
-  res.type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  res.attachment(`prezenta_${snake(activeGroupName)}.xlsx`);
-  res.send(buffer);
+  res.json(resultWithDates);
 });
 
 /**
