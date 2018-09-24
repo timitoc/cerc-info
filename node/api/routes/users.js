@@ -35,7 +35,7 @@ const adminFilter = privilegeFilter(2);
  *   ]
  */
 router.get("/", jwtFilter, adminFilter, async (req, res) => {
-  res.json(await query("SELECT user_id, email, name, privilege FROM users"));
+  res.json(await query("SELECT user_id AS userId, email, name, privilege FROM users"));
 });
 
 /**

@@ -38,6 +38,41 @@ router.post("/:date", jwtFilter, async (req, res) => {
   res.json({ success: true, attendanceId: r.insertId });
 });
 
+router.get("/by-user/:userId", jwtFilter, async (req, res) => {
+  const { userId } = req.decodedToken;
+
+  const activeGroupMappingId = R.path(["activeGroup"],
+    R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
+
+  const activeGroupId = R.path(["groupId"],
+    R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
+
+  const userIdParameter = R.prop("userId", req.params);
+
+  const list = await query(`
+    SELECT
+      attendance_id AS attendanceId,
+      DATE_FORMAT(date, "%d/%m/%Y") AS date,
+      (SELECT
+        COUNT(1) != 0
+       FROM attendance_users
+       WHERE
+         attendance_users.attendance_id = attendanceId
+         AND
+         attendance_users.user_id = ?
+      ) AS isPresent
+    FROM attendance
+    WHERE group_id = ?
+  `, [ userIdParameter, activeGroupId ]);
+
+  const userName = R.prop("name", R.head(await query("SELECT name FROM users WHERE user_id = ?", userIdParameter)));
+
+  res.json({
+    name: userName,
+    attendance: list
+  });
+});
+
 router.get("/users/:attendanceId", async (req, res) => {
   const { attendanceId } = req.params;
 
@@ -169,9 +204,8 @@ router.get("/", jwtFilter, async (req, res) => {
     res.json(attendanceList);
 });
 
-router.get("/:attendanceId/stats", jwtFilter, async (req, res) => {
+router.get("/stats", jwtFilter, async (req, res) => {
   const { userId, privilege } = req.decodedToken;
-  const { attendanceId } = req.params;
 
   const activeGroupMappingId = R.path(["activeGroup"],
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
@@ -217,16 +251,22 @@ router.get("/:attendanceId/stats", jwtFilter, async (req, res) => {
       of: numberOfAttendances
     };
     return R.merge(user, { stats });
-  });
+  }, resultWithDates);
 
-  res.json(resultWithStatistics);
+  const sortedResult = R.reverse(R.sortBy(R.path(Array.of("stats", "attended")), resultWithStatistics));
+
+  res.json(sortedResult);
 });
 
-router.get("/:attendanceId/sheet", async (req, res) => {
+router.get("/sheet", jwtFilter, async (req, res) => {
   const { attendanceId } = req.params;
+  const { userId } = req.decodedToken;
+
+  const activeGroupMappingId = R.path(["activeGroup"],
+    R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
   const activeGroupId = R.path(["groupId"],
-    R.head(await query("SELECT group_id AS groupId FROM attendance WHERE attendance_id = ?", attendanceId)));
+    R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   const activeGroupName = R.path(["name"],
     R.head(await query("SELECT name FROM groups WHERE group_id = ?", activeGroupId)));
@@ -281,6 +321,10 @@ router.get("/:attendanceId/sheet", async (req, res) => {
 
   res.type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
   res.attachment(`prezenta_${snake(activeGroupName)}.xlsx`);
+
+  res.set("access-control-expose-headers", "filename");
+  res.set("filename", `prezenta_${snake(activeGroupName)}.xlsx`);
+
   res.send(buffer);
 });
 
