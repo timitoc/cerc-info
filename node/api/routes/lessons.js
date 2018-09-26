@@ -70,10 +70,10 @@ router.get("/download/:fileName", async (req, res) => {
 router.get("/", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   if (R.isNil(activeGroupId)) {
@@ -138,10 +138,10 @@ router.get("/:lessonId", jwtFilter, async (req, res) => {
   const { lessonId } = req.params;
   const { userId } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   if (R.isNil(activeGroupId)) {

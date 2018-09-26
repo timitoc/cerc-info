@@ -27,10 +27,10 @@ const router = express.Router();
 router.post("/:date", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   const { date } = req.params;
@@ -41,10 +41,10 @@ router.post("/:date", jwtFilter, async (req, res) => {
 router.get("/by-user/:userId", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   const userIdParameter = R.prop("userId", req.params);
@@ -179,10 +179,10 @@ router.post("/:groupId/:date/:userId", async (req, res) => {
 router.get("/", jwtFilter, async (req, res) => {
   const { userId, privilege } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
     const attendanceList = await query(`
@@ -207,10 +207,10 @@ router.get("/", jwtFilter, async (req, res) => {
 router.get("/stats", jwtFilter, async (req, res) => {
   const { userId, privilege } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
   const dateList = await query(`
@@ -262,13 +262,13 @@ router.get("/sheet", jwtFilter, async (req, res) => {
   const { attendanceId } = req.params;
   const { userId } = req.decodedToken;
 
-  const activeGroupMappingId = R.path(["activeGroup"],
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
-  const activeGroupId = R.path(["groupId"],
+  const activeGroupId = R.prop("groupId",
     R.head(await query("SELECT group_id AS groupId FROM user_group WHERE user_group_id = ?", activeGroupMappingId)));
 
-  const activeGroupName = R.path(["name"],
+  const activeGroupName = R.prop("name",
     R.head(await query("SELECT name FROM groups WHERE group_id = ?", activeGroupId)));
 
   const userList = await query(`

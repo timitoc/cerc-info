@@ -73,7 +73,7 @@ router.post("/active-group", jwtFilter, async (req, res) => {
   const { userId, privilege } = req.decodedToken;
   const { groupId } = req.body;
 
-  const userGroupRelationId = R.path(["userGroupRelationId"], R.head(
+  const userGroupRelationId = R.prop("userGroupRelationId", R.head(
     await query("SELECT user_group_id AS userGroupRelationId FROM user_group WHERE user_id = ? AND group_id = ?", [ userId, groupId ])));
 
 
