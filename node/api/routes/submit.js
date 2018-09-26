@@ -36,11 +36,60 @@ router.get("/download/:fileName", async (req, res) => {
   res.send(fileContent);
 });
 
+router.get("/:submitId", jwtFilter, async (req, res) => {
+  const { submitId } = req.params;
+  const submitTasks = await query(`
+    SELECT
+      submit_id AS submitId,
+      upload_id AS uploadId,
+      task_id AS taskId,
+      link,
+      (link IS NULL) AS type
+    FROM submit_task
+    WHERE submit_id = ?
+  `, submitId);
 
-router.get("/:homeworkId", jwtFilter, async (req, res) => {
+  const submitTasksWithFiles = await Promise.all(
+    R.map(item => new Promise((resolve) => {
+      if (item.type && item.uploadId) {
+         query(`
+            SELECT
+              original_filename AS fileName,
+              filename AS uploadFileName,
+              mime_type AS mimeType,
+              file_hash AS hash,
+              CONCAT("/submit/download/", filename) AS url
+            FROM submit_uploads
+            WHERE submit_upload_id = ?
+          `, item.uploadId)
+          .then(submitUploads => {
+            return resolve(R.merge(item, { upload: R.head(submitUploads) }));
+          });
+      }
+      else resolve(item);
+  }), submitTasks));
+
+  console.log(submitTasksWithFiles);
+
+  res.json(submitTasksWithFiles);
+});
+
+router.get("/by-homework/:homeworkId/:userId", jwtFilter, async (req, res) => {
   const { homeworkId } = req.params;
+  const { userId } = req.decodedToken;
 
-  const submitId = R.prop("submitId", R.head(await query("SELECT submit_id AS submitId FROM submit WHERE homework_id = ?", homeworkId)));
+  const homeworkTitle = R.prop("title", R.head(await query(`
+    SELECT title
+    FROM homework
+    WHERE homework_id = ?
+  `, homeworkId)));
+
+  const submitId = R.prop("submitId", R.head(await query(`
+    SELECT
+      submit_id AS submitId
+    FROM submit
+    WHERE homework_id = ? AND user_id = ?
+    `, Array.of(homeworkId, userId))));
 
   if (!submitId)
     return [];
@@ -76,9 +125,30 @@ router.get("/:homeworkId", jwtFilter, async (req, res) => {
       else resolve(item);
   }), submitTasks));
 
-  console.log(submitTasksWithFiles);
+  res.json({ homeworkTitle, submits: submitTasksWithFiles });
+});
 
-  res.json(submitTasksWithFiles);
+
+router.get("/by-homework/:homeworkId", jwtFilter, async (req, res) => {
+  const { homeworkId } = req.params;
+
+  const homeworkTitle = R.prop("title", R.head(await query(`
+    SELECT title
+    FROM homework
+    WHERE homework_id = ?
+  `, homeworkId)));
+
+  const submitList = await query(`
+    SELECT 
+      submit_id AS submitId,
+      submit.user_id AS userId,
+      users.name AS userName
+    FROM submit
+    JOIN users ON users.user_id = submit.user_id
+    WHERE submit.homework_id = ?
+  `, homeworkId);
+
+  res.json({ homeworkTitle, submits: submitList });
 });
 
 
