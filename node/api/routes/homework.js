@@ -302,7 +302,7 @@ router.put("/:homeworkId", jwtFilter, async (req, res) => {
   const { userId } = req.decodedToken;
   const { description, title, tags } = req.body;
 
-  const activeGroupMappingId = R.prop("activeGroup"),
+  const activeGroupMappingId = R.prop("activeGroup",
     R.head(await query("SELECT active_group AS activeGroup FROM users WHERE user_id = ?", userId)));
 
   const activeGroupId = R.prop("groupId",
