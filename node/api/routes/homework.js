@@ -106,8 +106,8 @@ router.get("/", jwtFilter, async (req, res) => {
     `, homeworkId);
 
     const submit = R.head(await query(`
-      SELECT submit_id AS submitId FROM submit WHERE homework_id = ?
-    `, homeworkId));
+      SELECT submit_id AS submitId FROM submit WHERE homework_id = ? AND user_id = ?
+    `, [ homeworkId, userId ]));
 
     if (R.isNil(submit)) {
       return R.merge(homework, { status: "Netrimis" });
@@ -224,8 +224,8 @@ router.get("/:homeworkId", jwtFilter, async (req, res) => {
   `, homeworkId);
 
   const submit = R.head(await query(`
-    SELECT submit_id AS submitId FROM submit WHERE homework_id = ?
-  `, homeworkId));
+    SELECT submit_id AS submitId FROM submit WHERE homework_id = ? AND user_id = ?
+  `, [ homeworkId, userId ]));
 
   if (R.isNil(submit)) {
     const response = R.merge(homework, { tasks: taskList, tags: R.split(",", homework.tags), status: "Netrimis" });
